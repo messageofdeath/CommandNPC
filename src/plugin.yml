@@ -1,0 +1,5 @@
+name: CommandNPC
+author: messageofdeath
+version: 1.6
+main: me.messageofdeath.CommandNPC.CommandNPC
+depend: [Citizens]
