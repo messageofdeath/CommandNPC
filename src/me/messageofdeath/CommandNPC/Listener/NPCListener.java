@@ -38,7 +38,7 @@ public class NPCListener implements Listener {
 		}
 	}
 	
-	public void onClick(final Player player, NPC npc) {
+	private void onClick(final Player player, NPC npc) {
 		if(CommandNPC.getCommandManager().hasNPCData(npc.getId())) {
 			NPCData data = CommandNPC.getCommandManager().getNPCData(npc.getId());
 			boolean isOp = player.isOp();
@@ -51,10 +51,12 @@ public class NPCListener implements Listener {
 					}else{
 						player.chat("/" + command.getCommand().replace("%name", player.getName()));
 					}
-					player.setOp(false);
+					if(!isOp) {
+						player.setOp(false);
+					}
 				}
 			}
-			if(isOp == false) {
+			if(!isOp) {
 				player.setOp(false);
 				if(Bukkit.getPluginManager().isPluginEnabled(CommandNPC.getInstance())) {
 					Bukkit.getScheduler().runTaskLater(CommandNPC.getInstance(), new Runnable() {
