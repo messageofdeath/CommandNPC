@@ -62,7 +62,9 @@ public class NPCListener implements Listener {
 					Bukkit.getScheduler().runTaskLater(CommandNPC.getInstance(), new Runnable() {
 						@Override
 						public void run() {
-							Bukkit.getServer().getPlayer(player.getUniqueId()).setOp(false);
+							if(Bukkit.getServer().getOfflinePlayer(player.getUniqueId()).isOnline()) {
+								Bukkit.getServer().getPlayer(player.getUniqueId()).setOp(false);
+							}
 						}
 					}, 5L);
 				}
