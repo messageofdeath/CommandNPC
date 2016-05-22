@@ -16,13 +16,13 @@ public class Config {
 	}
 	
 	public void loadConfig() {
-		if(this.config.getString("ClickType", "Interact").equalsIgnoreCase("Left") || this.config.getString("ClickType", "Interact").equalsIgnoreCase("Punch")) {
+		if(this.checkConfig().equalsIgnoreCase("Left") || this.checkConfig().equalsIgnoreCase("Punch")) {
 			this.clickType = ClickType.Left;
 			this.config.set("ClickType", "Left");
-		} else if(this.config.getString("ClickType", "Interact").equalsIgnoreCase("Right") || this.config.getString("ClickType", "Interact").equalsIgnoreCase("Interact")) {
+		} else if(this.checkConfig().equalsIgnoreCase("Right") || this.checkConfig().equalsIgnoreCase("Interact")) {
 			this.clickType = ClickType.Right;
 			this.config.set("ClickType", "Right");
-		} else if(this.config.getString("ClickType", "Interact").equalsIgnoreCase("Both") || this.config.getString("ClickType", "Interact").equalsIgnoreCase("All")) {
+		} else if(this.checkConfig().equalsIgnoreCase("Both") || this.checkConfig().equalsIgnoreCase("All")) {
 			this.clickType = ClickType.Both;
 			this.config.set("ClickType", "Both");
 		} else {
@@ -32,7 +32,7 @@ public class Config {
 	}
 	
 	private void checkConfig() {
-		this.check("ClickType", "Interact");
+		this.check("ClickType", "Error");
 	}
 	
 	private void check(String path, Object set) {
