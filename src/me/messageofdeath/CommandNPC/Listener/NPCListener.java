@@ -41,32 +41,24 @@ public class NPCListener implements Listener {
 	private void onClick(final Player player, NPC npc) {
 		if(CommandNPC.getCommandManager().hasNPCData(npc.getId())) {
 			NPCData data = CommandNPC.getCommandManager().getNPCData(npc.getId());
-			boolean isOp = player.isOp();
 			for(NPCCommand command : data.getCommands()) {
-				if(player.hasPermission(command.getPermission()) || command.getPermission().equalsIgnoreCase("noPerm")
-						|| command.getPermission().isEmpty() || command.getPermission().equalsIgnoreCase("")) {
-					player.setOp(true);
+				if(player.hasPermission(command.getPermission()) || command.getPermission().equalsIgnoreCase("noPerm") || command.getPermission().isEmpty() || command.getPermission().equalsIgnoreCase("")) {
 					if(command.inConsole()) {
 						Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
 					}else{
-						player.chat("/" + command.getCommand().replace("%name", player.getName()));
+						if(!player.isOp()) {
+							try {
+								player.setOp(true);
+								player.performCommand(command.getCommand().replace("%name", player.getName()));
+                       					} catch(Exception e) {
+                       						e.printStackTrace();
+                       					} finally {
+                       						player.setOp(false);
+                       					}
+                		 		} else {
+							player.performCommand(command.getCommand().replace("%name", player.getName()));
+                   				}
 					}
-					if(!isOp) {
-						player.setOp(false);
-					}
-				}
-			}
-			if(!isOp) {
-				player.setOp(false);
-				if(Bukkit.getPluginManager().isPluginEnabled(CommandNPC.getInstance())) {
-					Bukkit.getScheduler().runTaskLater(CommandNPC.getInstance(), new Runnable() {
-						@Override
-						public void run() {
-							if(Bukkit.getServer().getOfflinePlayer(player.getUniqueId()).isOnline()) {
-								Bukkit.getServer().getPlayer(player.getUniqueId()).setOp(false);
-							}
-						}
-					}, 5L);
 				}
 			}
 		}
