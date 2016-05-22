@@ -16,20 +16,18 @@ public class Config {
 	}
 	
 	public void loadConfig() {
-		switch(this.config.getString("ClickType", "Interact")) {
-			case "Left":
-			case "Punch":
-				this.clickType = ClickType.Left;
-				break;
-			case "Right":
-			case "Interact":
-				this.clickType = ClickType.Right;
-			case "Both":
-			case "All":
-				this.clickType = ClickType.Both;
-				break;
-			default:
-				this.clickType = ClickType.Right;
+		if(this.config.getString("ClickType", "Interact").equalsIgnoreCase("Left") || this.config.getString("ClickType", "Interact").equalsIgnoreCase("Punch")) {
+			this.clickType = ClickType.Left;
+			this.config.set("ClickType", "Left");
+		} else if(this.config.getString("ClickType", "Interact").equalsIgnoreCase("Right") || this.config.getString("ClickType", "Interact").equalsIgnoreCase("Interact")) {
+			this.clickType = ClickType.Right;
+			this.config.set("ClickType", "Right");
+		} else if(this.config.getString("ClickType", "Interact").equalsIgnoreCase("Both") || this.config.getString("ClickType", "Interact").equalsIgnoreCase("All")) {
+			this.clickType = ClickType.Both;
+			this.config.set("ClickType", "Both");
+		} else {
+			this.clickType = ClickType.Right;
+			this.config.set("ClickType", "Error");
 		}
 	}
 	
