@@ -26,15 +26,15 @@ public class NPCListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onRight(NPCRightClickEvent event) {
-		if(CommandNPC.getConfigX().getClickType() != ClickType.Left) {
-			this.onClick(event.getClicker(), event.getNPC());
+		if(CommandNPC.getConfigX().getClickType() == ClickType.Right || CommandNPC.getConfigX().getClickType() == ClickType.Both) {
+			onClick(event.getClicker(), event.getNPC());
 		}
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onLeft(NPCLeftClickEvent event) {
-		if(CommandNPC.getConfigX().getClickType() != ClickType.Right) {
-			this.onClick(event.getClicker(), event.getNPC());
+        if(CommandNPC.getConfigX().getClickType() == ClickType.Left || CommandNPC.getConfigX().getClickType() == ClickType.Both) {
+			onClick(event.getClicker(), event.getNPC());
 		}
 	}
 	
