@@ -16,23 +16,23 @@ public class Config {
 	}
 	
 	public void loadConfig() {
-		if(this.checkConfig().equalsIgnoreCase("Left") || this.checkConfig().equalsIgnoreCase("Punch")) {
+		if(checkConfig().equalsIgnoreCase("Left")) {
 			this.clickType = ClickType.Left;
 			this.config.set("ClickType", "Left");
-		} else if(this.checkConfig().equalsIgnoreCase("Right") || this.checkConfig().equalsIgnoreCase("Interact")) {
+		} else if(checkConfig().equalsIgnoreCase("Right")) {
 			this.clickType = ClickType.Right;
 			this.config.set("ClickType", "Right");
-		} else if(this.checkConfig().equalsIgnoreCase("Both") || this.checkConfig().equalsIgnoreCase("All")) {
+		} else if(checkConfig().equalsIgnoreCase("Both")) {
 			this.clickType = ClickType.Both;
 			this.config.set("ClickType", "Both");
 		} else {
 			this.clickType = ClickType.Right;
-			this.config.set("ClickType", "Error");
+			this.config.set("ClickType", "Right");
 		}
 	}
 	
 	private void checkConfig() {
-		this.check("ClickType", "Error");
+		this.check("ClickType", "Interact");
 	}
 	
 	private void check(String path, Object set) {
