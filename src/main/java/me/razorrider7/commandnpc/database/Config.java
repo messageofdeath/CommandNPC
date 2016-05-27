@@ -1,7 +1,6 @@
 package me.razorrider7.commandnpc.database;
 
-import net.md_5.bungee.api.ChatColor;
-
+import org.Bukkit.ChatColor;
 import org.bukkit.Bukkit;
 
 import me.razorrider7.commandnpc.CommandNPC;
@@ -30,23 +29,6 @@ public class Config {
 		} else {
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "CommandNPC could not read the config.");
 			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Defaulting to both left and right click.");
-		}
-		
-		switch(this.config.getString("ClickType", "Interact")) {
-			case "Left":
-			case "Punch":
-				this.clickType = ClickType.Left;
-				break;
-			case "Right":
-			case "Interact":
-				this.clickType = ClickType.Right;
-				break;
-			case "Both":
-			case "All":
-				this.clickType = ClickType.Both;
-				break;
-			default:
-				this.clickType = ClickType.Right;
 		}
 	}
 	
