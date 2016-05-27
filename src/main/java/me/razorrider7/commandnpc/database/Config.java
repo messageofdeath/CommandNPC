@@ -1,5 +1,9 @@
 package me.razorrider7.commandnpc.database;
 
+import net.md_5.bungee.api.ChatColor;
+
+import org.bukkit.Bukkit;
+
 import me.razorrider7.commandnpc.CommandNPC;
 
 public class Config {
@@ -17,6 +21,17 @@ public class Config {
 	}
 	
 	public void loadConfig() {
+		if(this.config.getString("Clicktype", "Both").equalsIgnoreCase("Left")) {
+			this.clickType = ClickType.Left;
+		} else if(this.config.getString("Clicktype", "Both").equalsIgnoreCase("Right")) {
+			this.clickType = ClickType.Right;
+		} else if (this.config.getString("Clicktype", "Both").equalsIgnoreCase("Both")) {
+			this.clickType = ClickType.Both;
+		} else {
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "CommandNPC could not read the config.");
+			Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Defaulting to both left and right click.");
+		}
+		
 		switch(this.config.getString("ClickType", "Interact")) {
 			case "Left":
 			case "Punch":
@@ -36,7 +51,7 @@ public class Config {
 	}
 	
 	private void checkConfig() {
-		this.check("ClickType", "Right");
+		this.check("ClickType", "Both");
 	}
 	
 	private void check(String path, Object set) {
