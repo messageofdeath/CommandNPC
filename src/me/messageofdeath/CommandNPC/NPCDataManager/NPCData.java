@@ -82,6 +82,9 @@ public class NPCData {
 						}
 					}
 					lastPosition = commandx.getID();
+				}else if(lastPosition == commandx.getID()){
+					commandx.setID(commandx.getID() + 1);
+					lastPosition = commandx.getID();
 				}
 			}
 			Collections.sort(commands, comparePosition());
