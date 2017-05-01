@@ -28,19 +28,19 @@ public class CommandDatabase {
 				if (args.length == 5) {//Version 1.8.5
 					data.addCommand(new NPCCommand(args[0], args[1], CommandNPC.getConfigX().getClickType(), Boolean.parseBoolean(args[2]), 
 							Boolean.parseBoolean(args[3]), Double.parseDouble(args[4])));
-				}else if(args.length == 6) {// Version 1.8.6
+				}else if(args.length == 7) {// Version 1.8.6 and later
 					ClickType clickType = null;
-					if(args[2].equalsIgnoreCase("left")) {
+					if(args[3].equalsIgnoreCase("left")) {
 						clickType = ClickType.LEFT;
-					}else if(args[2].equalsIgnoreCase("right")) {
+					}else if(args[3].equalsIgnoreCase("right")) {
 						clickType = ClickType.RIGHT;
-					}else if(args[2].equalsIgnoreCase("both")) {
+					}else if(args[3].equalsIgnoreCase("both")) {
 						clickType = ClickType.BOTH;
 					}else{
 						clickType = CommandNPC.getConfigX().getClickType();
 					}
-					data.addCommand(new NPCCommand(args[0], args[1], clickType, Boolean.parseBoolean(args[3]), 
-							Boolean.parseBoolean(args[4]), Double.parseDouble(args[5])));
+					data.addCommand(new NPCCommand(Integer.parseInt(args[0]), args[1], args[2], clickType, Boolean.parseBoolean(args[4]), 
+							Boolean.parseBoolean(args[5]), Double.parseDouble(args[6])));
 				}
 			}
 			CommandNPC.getCommandManager().addNPCData(data);
@@ -55,7 +55,7 @@ public class CommandDatabase {
 		for (NPCData data : CommandNPC.getCommandManager().getNPCDatas()) {
 			ArrayList<String> commands = new ArrayList<String>();
 			for (NPCCommand command : data.getCommands()) {
-				commands.add(command.getCommand() + "~" + command.getPermission() + "~" + command.getClickType().toString() + "~" + 
+				commands.add(command.getID() + "~" + command.getCommand() + "~" + command.getPermission() + "~" + command.getClickType().toString() + "~" + 
 						command.inConsole() + "~" + command.asOp() + "~" + command.getCost());
 			}
 			database.set("NPCS." + data.getId() + ".Commands", commands);

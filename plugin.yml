@@ -1,7 +1,7 @@
 name: CommandNPC
 author: messageofdeath
 version: 1.8.6
-main: me.razorrider7.cmdnpc.CommandNPC
+main: me.messageofdeath.CommandNPC.CommandNPC
 depend: [Citizens]
 softdepend: [Vault]
 commands:

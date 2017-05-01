@@ -7,9 +7,8 @@ import me.messageofdeath.CommandNPC.Database.Config;
 import me.messageofdeath.CommandNPC.Listeners.NPCListener;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCDataManager;
 import me.messageofdeath.CommandNPC.Utilities.CitizenBackend.CitizenCommandRegister;
-import me.messageofdeath.CommandNPC.commands.AddCommand;
+import me.messageofdeath.CommandNPC.commands.CitizenCommands;
 import me.messageofdeath.CommandNPC.commands.ReloadCommand;
-import me.messageofdeath.CommandNPC.commands.ResetCommand;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;
@@ -18,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandNPC extends JavaPlugin {
 
-	private final String prefix = this.getColorized("&8[&6CommandNPC&8] &6");
+	public static final String prefix = CommandNPC.getColorized("&8[&6CommandNPC&8] &6");
 
 	private CitizenCommandRegister commandRegister;
 
@@ -57,8 +56,9 @@ public class CommandNPC extends JavaPlugin {
 		database.loadDatabase();
 		/** --------------Registering Commands-------------- **/
 		log("Injecting command info into Citizens.", true);
-		commandRegister.registerCitizenCommand(AddCommand.class);
-		commandRegister.registerCitizenCommand(ResetCommand.class);
+		//commandRegister.registerCitizenCommand(AddCommand.class);
+		//commandRegister.registerCitizenCommand(ResetCommand.class);
+		commandRegister.registerCitizenCommand(CitizenCommands.class);
 		getCommand("commandnpc").setExecutor(new ReloadCommand());
 		log("CommandNPC successfully loaded!", true);
 	}
@@ -75,15 +75,15 @@ public class CommandNPC extends JavaPlugin {
 	}
 
 	public String getPrefix() {
-		return this.prefix;
+		return CommandNPC.prefix;
 	}
 
-	public String getColorized(String input) {
+	public static String getColorized(String input) {
 		return ChatColor.translateAlternateColorCodes('&', input);
 	}
 
 	public void log(String log, boolean prefix) {
-		getServer().getConsoleSender().sendMessage(this.getColorized((prefix ? this.prefix : "") + log));
+		getServer().getConsoleSender().sendMessage(CommandNPC.getColorized((prefix ? CommandNPC.prefix : "") + log));
 	}
 
 	public static NPCDataManager getCommandManager() {
