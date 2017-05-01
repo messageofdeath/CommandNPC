@@ -26,6 +26,10 @@ public class CommandDatabase {
 			for (String commands : database.getStringArray("NPCS." + idx + ".Commands", new ArrayList<String>())) {
 				String[] args = commands.split("~");
 				if (args.length == 5) {//Version 1.8.5
+					String console = args[2];
+					if(console.toLowerCase().contains("-c")) {
+						console.replace("-c", "");
+					}
 					data.addCommand(new NPCCommand(args[0], args[1], CommandNPC.getConfigX().getClickType(), Boolean.parseBoolean(args[2]), 
 							Boolean.parseBoolean(args[3]), Double.parseDouble(args[4])));
 				}else if(args.length == 7) {// Version 1.8.6 and later
