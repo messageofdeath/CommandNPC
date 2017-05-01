@@ -1,5 +1,5 @@
 name: CommandNPC
-author: razorrider7
+author: messageofdeath
 version: 1.8.6
 main: me.razorrider7.cmdnpc.CommandNPC
 depend: [Citizens]

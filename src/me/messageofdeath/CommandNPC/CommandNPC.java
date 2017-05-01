@@ -1,15 +1,15 @@
-package me.razorrider7.cmdnpc;
+package me.messageofdeath.CommandNPC;
 
 import java.util.ArrayList;
 
-import me.razorrider7.cmdnpc.commands.AddCommand;
-import me.razorrider7.cmdnpc.commands.ReloadCommand;
-import me.razorrider7.cmdnpc.commands.ResetCommand;
-import me.razorrider7.cmdnpc.database.CommandDatabase;
-import me.razorrider7.cmdnpc.database.Config;
-import me.razorrider7.cmdnpc.listener.NPCListener;
-import me.razorrider7.cmdnpc.util.citizenbackend.CitizenCommandRegister;
-import me.razorrider7.cmdnpc.util.npcdatamanager.NPCDataManager;
+import me.messageofdeath.CommandNPC.Database.CommandDatabase;
+import me.messageofdeath.CommandNPC.Database.Config;
+import me.messageofdeath.CommandNPC.Listeners.NPCListener;
+import me.messageofdeath.CommandNPC.NPCDataManager.NPCDataManager;
+import me.messageofdeath.CommandNPC.Utilities.CitizenBackend.CitizenCommandRegister;
+import me.messageofdeath.CommandNPC.commands.AddCommand;
+import me.messageofdeath.CommandNPC.commands.ReloadCommand;
+import me.messageofdeath.CommandNPC.commands.ResetCommand;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.ChatColor;

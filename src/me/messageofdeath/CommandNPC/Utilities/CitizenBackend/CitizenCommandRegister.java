@@ -1,8 +1,8 @@
-package me.razorrider7.cmdnpc.util.citizenbackend;
+package me.messageofdeath.CommandNPC.Utilities.CitizenBackend;
 
 import java.lang.reflect.Field;
 
-import me.razorrider7.cmdnpc.CommandNPC;
+import me.messageofdeath.CommandNPC.CommandNPC;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.command.CommandManager;
 

@@ -1,4 +1,4 @@
-package me.razorrider7.cmdnpc.database;
+package me.messageofdeath.CommandNPC.Database;
 
 import java.io.File;
 import java.io.FileOutputStream;

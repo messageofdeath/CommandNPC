@@ -1,6 +1,6 @@
-package me.razorrider7.cmdnpc.database;
+package me.messageofdeath.CommandNPC.Database;
 
-import me.razorrider7.cmdnpc.CommandNPC;
+import me.messageofdeath.CommandNPC.CommandNPC;
 
 public class Config {
 

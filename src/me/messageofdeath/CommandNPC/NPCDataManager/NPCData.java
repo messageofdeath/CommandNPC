@@ -1,4 +1,4 @@
-package me.razorrider7.cmdnpc.util.npcdatamanager;
+package me.messageofdeath.CommandNPC.NPCDataManager;
 
 import java.util.ArrayList;
 

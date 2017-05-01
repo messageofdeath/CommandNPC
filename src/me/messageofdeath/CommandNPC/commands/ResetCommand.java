@@ -1,6 +1,5 @@
-package me.razorrider7.cmdnpc.commands;
+package me.messageofdeath.CommandNPC.commands;
 
-import me.razorrider7.cmdnpc.CommandNPC;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
@@ -8,6 +7,8 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.command.CommandSender;
+
+import me.messageofdeath.CommandNPC.CommandNPC;
 
 @Requirements(selected = true, ownership = true)
 public class ResetCommand {

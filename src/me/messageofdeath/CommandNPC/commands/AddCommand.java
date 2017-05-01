@@ -1,9 +1,9 @@
-package me.razorrider7.cmdnpc.commands;
+package me.messageofdeath.CommandNPC.commands;
 
-import me.razorrider7.cmdnpc.CommandNPC;
-import me.razorrider7.cmdnpc.database.ClickType;
-import me.razorrider7.cmdnpc.util.npcdatamanager.NPCCommand;
-import me.razorrider7.cmdnpc.util.npcdatamanager.NPCData;
+import me.messageofdeath.CommandNPC.CommandNPC;
+import me.messageofdeath.CommandNPC.Database.ClickType;
+import me.messageofdeath.CommandNPC.NPCDataManager.NPCCommand;
+import me.messageofdeath.CommandNPC.NPCDataManager.NPCData;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;

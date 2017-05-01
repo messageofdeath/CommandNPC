@@ -1,11 +1,12 @@
-package me.razorrider7.cmdnpc.commands;
+package me.messageofdeath.CommandNPC.commands;
 
-import me.razorrider7.cmdnpc.CommandNPC;
 import net.citizensnpcs.api.util.Messaging;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import me.messageofdeath.CommandNPC.CommandNPC;
 
 public class ReloadCommand implements CommandExecutor {
 
