@@ -1,0 +1,9 @@
+name: CommandNPC
+author: razorrider7
+version: 1.8.6
+main: me.razorrider7.cmdnpc.CommandNPC
+depend: [Citizens]
+softdepend: [Vault]
+commands:
+  commandnpc:
+    description: Reload this plugin.
