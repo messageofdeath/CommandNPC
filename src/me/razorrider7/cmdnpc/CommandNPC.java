@@ -31,6 +31,8 @@ public class CommandNPC extends JavaPlugin {
 	private static NPCDataManager manager;
 
 	private static Economy econ = null;
+	
+	private static boolean econAvailable = false;
 
 	@Override
 	public void onEnable() {
@@ -99,6 +101,10 @@ public class CommandNPC extends JavaPlugin {
 	public static JavaPlugin getInstance() {
 		return instance;
 	}
+	
+	public static boolean isEconAvailable() {
+		return econAvailable;
+	}
 
 	public void logError(String topic, String classx, String method, String error) {
 		final String space = "                                                             ";
@@ -152,6 +158,7 @@ public class CommandNPC extends JavaPlugin {
 		econ = rsp.getProvider();
 		if (econ != null) {
 			log("Vault compatible economy found! Economy support for CommandNPC has been enabled.", true);
+			econAvailable = true;
 		}
 	}
 }
