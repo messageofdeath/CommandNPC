@@ -6,11 +6,15 @@ import me.messageofdeath.CommandNPC.CommandNPC;
 import me.messageofdeath.CommandNPC.Database.ClickType;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCCommand;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCData;
+import me.messageofdeath.CommandNPC.Utilities.BungeeCord.BungeeCordUtil;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
+/*import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;*/
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -64,34 +68,53 @@ public class NPCListener implements Listener {
 			for(NPCCommand command : data.getCommands()) {
 				if(command.getClickType() == clickType || command.getClickType() == ClickType.BOTH) {
 					if(player.hasPermission(command.getPermission()) || command.getPermission().equalsIgnoreCase("noPerm") || command.getPermission().isEmpty()) {
-						boolean hadEnough = true;
+						//------------ Economy ------------
 						if(command.getCost() > 0 && CommandNPC.isEconAvailable()) {
 							if(CommandNPC.getEcon().has(player, command.getCost())) {
 								CommandNPC.getEcon().withdrawPlayer(player, command.getCost());
 							}else{
-								hadEnough = false;
+								Messaging.sendError(player, "You do not have enough money for this!");
+								return;
 							}
 						}
-						if(hadEnough) {
-							if(!command.inConsole()) {
-								try{
-									if(!isOp && command.asOp()) {
-										player.setOp(true);
-									}
-									player.chat("/" + command.getCommand().replace("%name", player.getName()));
-									Messaging.send(player, "Command Executed.");
-								}finally{
-									player.setOp(isOp);
+						//------------ BungeeCord ------------
+						if(command.getCommand().toLowerCase().startsWith("server")) {
+							if(CommandNPC.getConfigX().isBungeeCord()) {
+								String[] args = command.getCommand().split(" ");
+								if(args.length == 2) {
+									BungeeCordUtil.sendPlayerToServer(player, args[1]);
+									CommandNPC.getInstance().log("Sent '"+player.getName()+"' to server '"+args[1]+"'!", true);
+									return;
+								}else{
+									Messaging.sendError(player, "Command can only have 1 argument. /server <server>");
+									return;
 								}
 							}else{
-								Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
-								Messaging.send(player, "Command Executed.");
+								Messaging.sendError(player, "Command is a /server command, but BungeeCord is disabled in config.yml!");
+								return;
+							}
+						}
+						//------------ Execute Command ------------
+						if(!command.inConsole()) {
+							try{
+								if(!isOp && command.asOp()) {
+									player.setOp(true);
+								}
+								player.chat("/" + command.getCommand().replace("%name", player.getName()));
+								if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
+									Messaging.send(player, "Command Executed.");
+								}
+							}finally{
+								player.setOp(isOp);
 							}
 						}else{
-							Messaging.sendError(player, "You do not have enough money for this!");
+							Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
+							if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
+								Messaging.send(player, "Command Executed.");
+							}
 						}
 					}else{
-						Messaging.sendError(player, "You do not have permission for this!");
+						Messaging.sendError(player, "You do not have enough money for this!");
 					}
 				}//Wrong clickType (Do nothing)
 			}

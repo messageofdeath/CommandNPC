@@ -8,6 +8,8 @@ public class Config {
 	private YamlDatabase config;
 	private ClickType clickType;
 	private int coolDown;
+	private boolean executeCommandMessage;
+	private boolean isBungeeCord;
 
 	public Config(CommandNPC instance) {
 		this.instance = instance;
@@ -29,7 +31,8 @@ public class Config {
 			instance.log("Could not load ClickType in config! Defaulting to Both!", true);
 			this.clickType = ClickType.BOTH;
 		}
-
+		this.isBungeeCord = this.config.getBoolean("BungeeCord", false);
+		this.executeCommandMessage = this.config.getBoolean("executeCommandMessage", true);
 		this.coolDown = this.config.getInteger("CoolDown", 20);
 		if(this.coolDown < 1) {
 			this.coolDown = 20;
@@ -46,6 +49,8 @@ public class Config {
 	private void checkConfig() {
 		check("ClickType", "Interact");
 		check("CoolDown", 20);
+		check("ExecuteCommandMessage", true);
+		check("BungeeCord", false);
 	}
 
 	private void check(String path, Object set) {
@@ -60,5 +65,13 @@ public class Config {
 
 	public int getCoolDown() {
 		return this.coolDown;
+	}
+	
+	public boolean isExecuteCommandMessage() {
+		return this.executeCommandMessage;
+	}
+	
+	public boolean isBungeeCord() {
+		return this.isBungeeCord;
 	}
 }
