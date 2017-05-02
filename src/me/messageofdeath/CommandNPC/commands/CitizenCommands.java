@@ -23,7 +23,7 @@ public class CitizenCommands {
 	public void addCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int id = npc.getId();
 		String permission = "noPerm";
-		ClickType clickType = null;
+		ClickType clickType = CommandNPC.getConfigX().getClickType();
 		boolean inConsole = false;
 		boolean asOp = false;
 		String cmd = null;
