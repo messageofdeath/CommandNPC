@@ -6,6 +6,7 @@ import me.messageofdeath.CommandNPC.Database.CommandDatabase;
 import me.messageofdeath.CommandNPC.Database.Config;
 import me.messageofdeath.CommandNPC.Listeners.NPCListener;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCDataManager;
+import me.messageofdeath.CommandNPC.Utilities.BungeeCord.BungeeCordUtil;
 import me.messageofdeath.CommandNPC.Utilities.CitizenBackend.CitizenCommandRegister;
 import me.messageofdeath.CommandNPC.commands.CitizenCommands;
 import me.messageofdeath.CommandNPC.commands.ReloadCommand;
@@ -17,7 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandNPC extends JavaPlugin {
 
-	public static final String prefix = CommandNPC.getColorized("&8[&6CommandNPC&8] &6");
+	public static final String prefix = CommandNPC.getColorized("&8[&2CommandNPC&8] &6");
 
 	private CitizenCommandRegister commandRegister;
 
@@ -51,15 +52,18 @@ public class CommandNPC extends JavaPlugin {
 		/** --------------Initiation of the Listener-------------- **/
 		getServer().getPluginManager().registerEvents(new NPCListener(), this);
 		/** --------------Initiation and Loading of Databases-------------- **/
+		log("Initiating Database", true);
 		database = new CommandDatabase(this);
 		database.initDatabase();
 		database.loadDatabase();
 		/** --------------Registering Commands-------------- **/
 		log("Injecting command info into Citizens.", true);
-		//commandRegister.registerCitizenCommand(AddCommand.class);
-		//commandRegister.registerCitizenCommand(ResetCommand.class);
 		commandRegister.registerCitizenCommand(CitizenCommands.class);
 		getCommand("commandnpc").setExecutor(new ReloadCommand());
+		if(config.isBungeeCord()) {
+			log("Setting up BungeeCord", true);
+			BungeeCordUtil.setupUtil();
+		}
 		log("CommandNPC successfully loaded!", true);
 	}
 
@@ -98,8 +102,8 @@ public class CommandNPC extends JavaPlugin {
 		return config;
 	}
 
-	public static JavaPlugin getInstance() {
-		return instance;
+	public static CommandNPC getInstance() {
+		return (CommandNPC)instance;
 	}
 	
 	public static boolean isEconAvailable() {
