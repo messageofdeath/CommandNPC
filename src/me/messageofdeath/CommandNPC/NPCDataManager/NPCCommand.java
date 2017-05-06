@@ -5,6 +5,7 @@ import me.messageofdeath.CommandNPC.Database.ClickType;
 public class NPCCommand {
 
 	private int id;
+	private int delay;
 	private String command;
 	private String permission;
 	private ClickType clickType;
@@ -12,16 +13,11 @@ public class NPCCommand {
 	private boolean asOp;
 	private double cost;
 	
-	public NPCCommand(String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, double cost) {
-		this.command = command;
-		this.permission = permission;
-		this.clickType = clickType;
-		this.inConsole = inConsole;
-		this.asOp = asOp;
-		this.cost = cost;
+	public NPCCommand(String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, double cost, int delay) {
+		this(1000, command, permission, clickType, inConsole, asOp, cost, delay);
 	}
 	
-	public NPCCommand(int id, String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, double cost) {
+	public NPCCommand(int id, String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, double cost, int delay) {
 		this.id = id;
 		this.command = command;
 		this.permission = permission;
@@ -29,6 +25,7 @@ public class NPCCommand {
 		this.inConsole = inConsole;
 		this.asOp = asOp;
 		this.cost = cost;
+		this.delay = delay;
 	}
 	
 	public int getID() {
@@ -59,6 +56,10 @@ public class NPCCommand {
 		return this.cost;
 	}
 	
+	public int getDelay() {
+		return this.delay;
+	}
+	
 	public void setID(int id) {
 		this.id = id;
 	}
@@ -85,5 +86,9 @@ public class NPCCommand {
 	
 	public void setCost(double cost) {
 		this.cost = cost;
+	}
+	
+	public void setDelay(int delay) {
+		this.delay = delay;
 	}
 }

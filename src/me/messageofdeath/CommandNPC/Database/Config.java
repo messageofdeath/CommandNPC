@@ -49,7 +49,7 @@ public class Config {
 	private void checkConfig() {
 		check("ClickType", "Interact");
 		check("CoolDown", 20);
-		check("ExecuteCommandMessage", true);
+		check("ExecuteCommandMessage", false);
 		check("BungeeCord", false);
 	}
 

@@ -18,8 +18,8 @@ import net.citizensnpcs.api.util.Messaging;
 @Requirements(selected = true, ownership = true)
 public class CitizenCommands {
 
-	@Command(aliases = { "npc" }, usage = "cmdadd [-c console] [-o Op] [--v price] [--t clickType] [--p custom.permission.node] <command...>", desc = "Add a command to a NPC", 
-			modifiers = { "cmdadd" }, min = 2, flags = "oc", permission = "commandnpc.admin")
+	@Command(aliases = { "npc" }, usage = "cmdadd [-c console] [-o Op] [--v price] [--t clickType] [--d delay] [--p custom.permission.node] <command...>", 
+			desc = "Add a command to a NPC", modifiers = { "cmdadd" }, min = 2, flags = "oc", permission = "commandnpc.admin")
 	public void addCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int id = npc.getId();
 		String permission = "noPerm";
@@ -28,6 +28,7 @@ public class CitizenCommands {
 		boolean asOp = false;
 		String cmd = null;
 		double cost = 0;
+		int delay = 0;
 		
 		if (args.hasFlag('c')) {
 			inConsole = true;
@@ -47,15 +48,26 @@ public class CitizenCommands {
 				Messaging.sendError(sender, "For value flag 't' you must use 'left', 'right', or 'both'!");
 			}
 		}
-		if (args.hasValueFlag("v")) {
-			cost = args.getFlagDouble("v");
-		}
 		if (args.hasValueFlag("p")) {
 			permission = args.getFlag("p");
 		}
+		if (args.hasValueFlag("v")) {
+			if(StringUtils.isNumeric(args.getFlag("v"))) {
+				cost = args.getFlagDouble("v");
+			}else{
+				Messaging.sendError(sender, "The cost variable must be numeric!");
+			}
+		}
+		if (args.hasValueFlag("d")) {
+			if(StringUtils.isNumeric(args.getFlag("d"))) {
+				delay = args.getFlagInteger("d");
+			}else{
+				Messaging.sendError(sender, "The delay variable must be numeric!");
+			}
+		}
 		cmd = args.getJoinedStrings(1);
 		if (cmd != null) {
-			NPCCommand npcCommand = new NPCCommand(cmd, permission, clickType, inConsole, asOp, cost);
+			NPCCommand npcCommand = new NPCCommand(cmd, permission, clickType, inConsole, asOp, cost, delay);
 			if (CommandNPC.getCommandManager().hasNPCData(id)) {
 				CommandNPC.getCommandManager().getNPCData(id).addCommand(npcCommand);
 			} else {
@@ -88,7 +100,7 @@ public class CitizenCommands {
 		}
 	}
 	
-	@Command(aliases = { "npc" }, usage = "cmdset <id> [--p custom.permission.node] [--v price] [--t clickType] [-c console] [-o Op] [command...]", 
+	@Command(aliases = { "npc" }, usage = "cmdset <id> [--p custom.permission.node] [--v price] [--t clickType] [--d delay] [-c console] [-o Op] [command...]", 
 			desc = "Set various variables for the command.", modifiers = { "cmdset" }, min = 2, flags = "co", permission = "commandnpc.admin")
 	public void setCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int npcID = npc.getId();
@@ -117,6 +129,14 @@ public class CitizenCommands {
 							Messaging.send(sender, "Cost to: " + command.getCost());
 						}else{
 							Messaging.sendError(sender, "The cost variable must be numeric!");
+						}
+					}
+					if (args.hasValueFlag("d")) {
+						if(StringUtils.isNumeric(args.getFlag("d"))) {
+							command.setDelay(args.getFlagInteger("d"));
+							Messaging.send(sender, "Delay to: " + command.getDelay());
+						}else{
+							Messaging.sendError(sender, "The delay variable must be numeric!");
 						}
 					}
 					if(args.hasValueFlag("t")) {
@@ -179,7 +199,8 @@ public class CitizenCommands {
 				Messaging.send(sender, "  &7Command ID: &6" + command.getID());
 				Messaging.send(sender, " &8 -&2 Command: &b" + command.getCommand());
 				Messaging.send(sender, " &8 -&2 Permission: &b" + command.getPermission());
-				Messaging.send(sender, " &8 -&2 ClickType: &b" + command.getClickType().name().toLowerCase() + " &8| &2Cost: &b" + command.getCost());
+				Messaging.send(sender, " &8 -&2 ClickType: &b" + command.getClickType().name().toLowerCase() + " &8| &2Cost: &b" + command.getCost()
+				 + " &8| &2Delay: &b" + command.getDelay() + " ticks");
 				Messaging.send(sender, " &8 -&2 In Console: &b" + command.inConsole() + " &8| &2As Op: &b" + command.asOp());
 			}
 		}else{

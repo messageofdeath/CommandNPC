@@ -83,7 +83,16 @@ public class NPCListener implements Listener {
 								String[] args = command.getCommand().split(" ");
 								if(args.length == 2) {
 									BungeeCordUtil.sendPlayerToServer(player, args[1]);
-									CommandNPC.getInstance().log("Sent '"+player.getName()+"' to server '"+args[1]+"'!", true);
+									if(command.getDelay() > 0) {
+										scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), new Runnable() {
+											@Override
+											public void run() {
+												CommandNPC.getInstance().log("Sent '"+player.getName()+"' to server '"+args[1]+"'!", true);
+											}
+										}, command.getDelay());
+									}else{
+										CommandNPC.getInstance().log("Sent '"+player.getName()+"' to server '"+args[1]+"'!", true);
+									}
 									return;
 								}else{
 									Messaging.sendError(player, "Command can only have 1 argument. /server <server>");
@@ -100,17 +109,41 @@ public class NPCListener implements Listener {
 								if(!isOp && command.asOp()) {
 									player.setOp(true);
 								}
-								player.chat("/" + command.getCommand().replace("%name", player.getName()));
-								if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
-									Messaging.send(player, "Command Executed.");
+								if(command.getDelay() > 0) {
+									scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), new Runnable() {
+										@Override
+										public void run() {
+											player.chat("/" + command.getCommand().replace("%name", player.getName()));
+											if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
+												Messaging.send(player, "Command Executed.");
+											}
+										}
+									}, command.getDelay());
+								}else{
+									player.chat("/" + command.getCommand().replace("%name", player.getName()));
+									if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
+										Messaging.send(player, "Command Executed.");
+									}
 								}
 							}finally{
 								player.setOp(isOp);
 							}
 						}else{
-							Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
-							if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
-								Messaging.send(player, "Command Executed.");
+							if(command.getDelay() > 0) {
+								scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), new Runnable() {
+									@Override
+									public void run() {
+										Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
+										if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
+											Messaging.send(player, "Command Executed.");
+										}
+									}
+								}, command.getDelay());
+							}else{
+								Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
+								if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
+									Messaging.send(player, "Command Executed.");
+								}
 							}
 						}
 					}else{
