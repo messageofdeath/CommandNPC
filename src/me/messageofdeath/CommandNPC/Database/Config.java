@@ -32,7 +32,7 @@ public class Config {
 			this.clickType = ClickType.BOTH;
 		}
 		this.isBungeeCord = this.config.getBoolean("BungeeCord", false);
-		this.executeCommandMessage = this.config.getBoolean("executeCommandMessage", true);
+		this.executeCommandMessage = this.config.getBoolean("ExecuteCommandMessage", false);
 		this.coolDown = this.config.getInteger("CoolDown", 20);
 		if(this.coolDown < 1) {
 			this.coolDown = 20;
