@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import me.messageofdeath.CommandNPC.CommandNPC;
+import me.messageofdeath.CommandNPC.Utilities.BungeeCord.BungeeCordUtil;
 
 public class ReloadCommand implements CommandExecutor {
 
@@ -15,8 +16,14 @@ public class ReloadCommand implements CommandExecutor {
 		if(args.length == 1) {
 			if (args[0].equalsIgnoreCase("reload")) {
 				if(sender.hasPermission("commandnpc.admin") || sender.isOp()) {
+					if(CommandNPC.getConfigX().isBungeeCord()) {
+						BungeeCordUtil.disableUtil();
+					}
 					CommandNPC.getConfigX().reloadConfig();
 					Messaging.send(sender, "Reloaded CommandNPC");
+					if(CommandNPC.getConfigX().isBungeeCord()) {
+						BungeeCordUtil.setupUtil();
+					}
 					return true;
 				}else{
 					Messaging.sendError(sender, "You do not have permission for this!");

@@ -15,6 +15,11 @@ public class BungeeCordUtil {
 		plugin.getServer().getMessenger().registerOutgoingPluginChannel(plugin, "BungeeCord");
 	}
 	
+	public static void disableUtil() {
+		JavaPlugin plugin = CommandNPC.getInstance();
+		plugin.getServer().getMessenger().unregisterOutgoingPluginChannel(plugin, "BungeeCord");
+	}
+	
 	public static void sendPlayerToServer(Player player, String serverName) {
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("Connect");

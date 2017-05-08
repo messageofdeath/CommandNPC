@@ -38,39 +38,43 @@ public class CommandNPC extends JavaPlugin {
 	public void onEnable() {
 		/** --------------Checking for Dependencies-------------- **/
 		if (!getServer().getPluginManager().isPluginEnabled("Citizens")) {
-			logError("Required Dependencies", "CommandNPC", "onEnable()", "Citizens 2 not found! CommandNPC will now shut down.");
-			getServer().getPluginManager().disablePlugin(this);
+			this.logError("Required Dependencies", "CommandNPC", "onEnable()", "Citizens 2 not found! CommandNPC will now shut down.");
+			super.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
-		setupEconomy();
+		this.setupEconomy();
 				
 		/** --------------Initiation of Databases, Managers, and Parsers-------------- **/
-		instance = this;
-		manager = new NPCDataManager();
-		config = new Config(this);
-		commandRegister = new CitizenCommandRegister(this);
+		CommandNPC.instance = this;
+		CommandNPC.manager = new NPCDataManager();
+		CommandNPC.config = new Config(this);
+		this.commandRegister = new CitizenCommandRegister(this);
 		/** --------------Initiation of the Listener-------------- **/
-		getServer().getPluginManager().registerEvents(new NPCListener(), this);
+		super.getServer().getPluginManager().registerEvents(new NPCListener(), this);
 		/** --------------Initiation and Loading of Databases-------------- **/
-		log("Initiating Database", true);
-		database = new CommandDatabase(this);
-		database.initDatabase();
-		database.loadDatabase();
+		this.log("Initiating Database", true);
+		CommandNPC.database = new CommandDatabase(this);
+		CommandNPC.database.initDatabase();
+		CommandNPC.database.loadDatabase();
 		/** --------------Registering Commands-------------- **/
-		log("Injecting command info into Citizens.", true);
-		commandRegister.registerCitizenCommand(CitizenCommands.class);
-		getCommand("commandnpc").setExecutor(new ReloadCommand());
-		if(config.isBungeeCord()) {
-			log("Setting up BungeeCord", true);
+		this.log("Injecting command info into Citizens.", true);
+		this.commandRegister.registerCitizenCommand(CitizenCommands.class);
+		super.getCommand("commandnpc").setExecutor(new ReloadCommand());
+		if(CommandNPC.getConfigX().isBungeeCord()) {
+			this.log("Setting up BungeeCord", true);
 			BungeeCordUtil.setupUtil();
 		}
-		log("CommandNPC successfully loaded!", true);
+		this.log("CommandNPC successfully loaded!", true);
 	}
 
 	@Override
 	public void onDisable() {
 		if (database != null) {
 			database.saveDatabase();
+		}
+		if(CommandNPC.getConfigX().isBungeeCord()) {
+			this.log("Disabling BungeeCord Support", true);
+			BungeeCordUtil.disableUtil();
 		}
 	}
 
