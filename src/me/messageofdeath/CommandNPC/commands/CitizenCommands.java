@@ -2,13 +2,13 @@ package me.messageofdeath.CommandNPC.commands;
 
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
 import me.messageofdeath.CommandNPC.CommandNPC;
 import me.messageofdeath.CommandNPC.Database.ClickType;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCCommand;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCData;
+import me.messageofdeath.CommandNPC.Utilities.Utilities;
 import net.citizensnpcs.api.command.Command;
 import net.citizensnpcs.api.command.CommandContext;
 import net.citizensnpcs.api.command.Requirements;
@@ -52,14 +52,14 @@ public class CitizenCommands {
 			permission = args.getFlag("p");
 		}
 		if (args.hasValueFlag("v")) {
-			if(StringUtils.isNumeric(args.getFlag("v"))) {
+			if(Utilities.isDouble(args.getFlag("v"))) {
 				cost = args.getFlagDouble("v");
 			}else{
 				Messaging.sendError(sender, "The cost variable must be numeric!");
 			}
 		}
 		if (args.hasValueFlag("d")) {
-			if(StringUtils.isNumeric(args.getFlag("d"))) {
+			if(Utilities.isInteger(args.getFlag("d"))) {
 				delay = args.getFlagInteger("d");
 			}else{
 				Messaging.sendError(sender, "The delay variable must be numeric!");
@@ -85,7 +85,7 @@ public class CitizenCommands {
 		int id = npc.getId();
 		if(CommandNPC.getCommandManager().hasNPCData(id)) {
 			NPCData data = CommandNPC.getCommandManager().getNPCData(id);
-			if(StringUtils.isNumeric(args.getString(1))) {
+			if(Utilities.isInteger(args.getString(1))) {
 				if(data.hasCommand(args.getInteger(1))) {
 					data.removeCommand(args.getInteger(1));
 					Messaging.send(sender, "You have successfully removed the command!");
@@ -104,7 +104,7 @@ public class CitizenCommands {
 			desc = "Set various variables for the command.", modifiers = { "cmdset" }, min = 2, flags = "co", permission = "commandnpc.admin")
 	public void setCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int npcID = npc.getId();
-		if(StringUtils.isNumeric(args.getString(1))) {
+		if(Utilities.isInteger(args.getString(1))) {
 			int id = args.getInteger(1);
 			if(CommandNPC.getCommandManager().hasNPCData(npcID)) {
 				NPCData data = CommandNPC.getCommandManager().getNPCData(npcID);
@@ -124,7 +124,7 @@ public class CitizenCommands {
 						Messaging.send(sender, "Permission to: " + command.getPermission());
 					}
 					if(args.hasValueFlag("v")) {
-						if(StringUtils.isNumeric(args.getFlag("v"))) {
+						if(Utilities.isDouble(args.getFlag("v"))) {
 							command.setCost(args.getFlagDouble("v"));
 							Messaging.send(sender, "Cost to: " + command.getCost());
 						}else{
@@ -132,7 +132,7 @@ public class CitizenCommands {
 						}
 					}
 					if (args.hasValueFlag("d")) {
-						if(StringUtils.isNumeric(args.getFlag("d"))) {
+						if(Utilities.isInteger(args.getFlag("d"))) {
 							command.setDelay(args.getFlagInteger("d"));
 							Messaging.send(sender, "Delay to: " + command.getDelay());
 						}else{
@@ -178,7 +178,7 @@ public class CitizenCommands {
 			NPCData data = CommandNPC.getCommandManager().getNPCData(id);
 			ArrayList<NPCCommand> commands = null;
 			if(args.argsLength() == 2) {
-				if(StringUtils.isNumeric(args.getString(1))) {
+				if(Utilities.isInteger(args.getString(1))) {
 					int cmdID = args.getInteger(1);
 					if(data.hasCommand(cmdID)) {
 						commands = new ArrayList<NPCCommand>();
