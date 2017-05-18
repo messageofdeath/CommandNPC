@@ -25,7 +25,14 @@ public class CitizenCommands {
 	public void addCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int id = npc.getId();
 		String permission = "noPerm";
-		ClickType clickType = ClickType.valueOf(PluginSettings.ClickType.getSetting());
+		ClickType clickType = null;
+		if(ClickType.hasClickType(PluginSettings.ClickType.getSetting())) {
+			clickType = ClickType.getClickType(PluginSettings.ClickType.getSetting());
+		}else{
+			clickType = ClickType.BOTH;
+			CommandNPC.getInstance().logError("ClickType", "CitizensCommands", "addCmd(CommandContext, CommandSender, NPC)", "ClickType from config.yml did not resolve! "
+					+ "Resulting to ClickType BOTH!");
+		}
 		boolean inConsole = false;
 		boolean isRandom = false;
 		boolean asOp = false;
