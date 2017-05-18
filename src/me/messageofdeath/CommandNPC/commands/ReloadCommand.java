@@ -21,8 +21,7 @@ public class ReloadCommand implements CommandExecutor {
 					if(PluginSettings.BungeeCord.getBoolean()) {
 						BungeeCordUtil.disableUtil();
 					}
-					CommandNPC.getConfigX().initConfiguration();
-					CommandNPC.getConfigX().loadConfiguration();
+					CommandNPC.getInstance().reloadConfigX();
 					Messaging.send(sender, LanguageSettings.Commands_CmdNPC_Reload.getSetting());
 					if(PluginSettings.BungeeCord.getBoolean()) {
 						BungeeCordUtil.setupUtil();

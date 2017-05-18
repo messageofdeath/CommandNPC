@@ -41,12 +41,7 @@ public class CommandNPC extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		CommandNPC.config = new PluginConfiguration(this);
-		CommandNPC.config.initConfiguration();
-		CommandNPC.config.loadConfiguration();
-		CommandNPC.langConfig = new LanguageConfiguration(this);
-		CommandNPC.langConfig.initConfiguration();
-		CommandNPC.langConfig.loadConfiguration();
+		this.reloadConfigX();
 		CommandNPC.prefix = CommandNPC.getColorized(LanguageSettings.General_PluginTag.getSetting());
 		/** --------------Checking for Dependencies-------------- **/
 		if (!getServer().getPluginManager().isPluginEnabled("Citizens")) {
@@ -115,6 +110,15 @@ public class CommandNPC extends JavaPlugin {
 	
 	public static PluginConfiguration getConfigX() {
 		return config;
+	}
+	
+	public void reloadConfigX() {
+		config = new PluginConfiguration(this);
+		config.initConfiguration();
+		config.loadConfiguration();
+		langConfig = new LanguageConfiguration(this);
+		langConfig.initConfiguration();
+		langConfig.loadConfiguration();
 	}
 
 	public static CommandNPC getInstance() {
