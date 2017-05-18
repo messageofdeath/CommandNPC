@@ -30,6 +30,15 @@ public class NPCData {
 		return this.npcID;
 	}
 	
+	public boolean isRandom() {
+		for(NPCCommand cmd : this.commands) {
+			if(cmd.isRandom()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void addCommand(NPCCommand command) {
 		this.commands.add(command);
 		checkPositions();

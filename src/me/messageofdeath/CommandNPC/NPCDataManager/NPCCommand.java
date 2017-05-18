@@ -11,19 +11,21 @@ public class NPCCommand {
 	private ClickType clickType;
 	private boolean inConsole;
 	private boolean asOp;
+	private boolean isRandom;
 	private double cost;
 	
-	public NPCCommand(String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, double cost, int delay) {
-		this(1000, command, permission, clickType, inConsole, asOp, cost, delay);
+	public NPCCommand(String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, double cost, int delay) {
+		this(1000, command, permission, clickType, inConsole, asOp, isRandom, cost, delay);
 	}
 	
-	public NPCCommand(int id, String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, double cost, int delay) {
+	public NPCCommand(int id, String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, double cost, int delay) {
 		this.id = id;
 		this.command = command;
 		this.permission = permission;
 		this.clickType = clickType;
 		this.inConsole = inConsole;
 		this.asOp = asOp;
+		this.isRandom = isRandom;
 		this.cost = cost;
 		this.delay = delay;
 	}
@@ -50,6 +52,10 @@ public class NPCCommand {
 	
 	public boolean asOp() {
 		return this.asOp;
+	}
+	
+	public boolean isRandom() {
+		return this.isRandom;
 	}
 	
 	public double getCost() {
@@ -82,6 +88,10 @@ public class NPCCommand {
 	
 	public void setAsOP(boolean asOp) {
 		this.asOp = asOp;
+	}
+	
+	public void setIsRandom(boolean isRandom) {
+		this.isRandom = isRandom;
 	}
 	
 	public void setCost(double cost) {

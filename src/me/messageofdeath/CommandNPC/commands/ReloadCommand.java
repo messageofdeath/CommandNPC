@@ -7,6 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import me.messageofdeath.CommandNPC.CommandNPC;
+import me.messageofdeath.CommandNPC.Database.LanguageSettings.LanguageSettings;
+import me.messageofdeath.CommandNPC.Database.PluginSettings.PluginSettings;
 import me.messageofdeath.CommandNPC.Utilities.BungeeCord.BungeeCordUtil;
 
 public class ReloadCommand implements CommandExecutor {
@@ -16,23 +18,24 @@ public class ReloadCommand implements CommandExecutor {
 		if(args.length == 1) {
 			if (args[0].equalsIgnoreCase("reload")) {
 				if(sender.hasPermission("commandnpc.admin") || sender.isOp()) {
-					if(CommandNPC.getConfigX().isBungeeCord()) {
+					if(PluginSettings.BungeeCord.getBoolean()) {
 						BungeeCordUtil.disableUtil();
 					}
-					CommandNPC.getConfigX().reloadConfig();
-					Messaging.send(sender, "Reloaded CommandNPC");
-					if(CommandNPC.getConfigX().isBungeeCord()) {
+					CommandNPC.getConfigX().initConfiguration();
+					CommandNPC.getConfigX().loadConfiguration();
+					Messaging.send(sender, LanguageSettings.Commands_CmdNPC_Reload.getSetting());
+					if(PluginSettings.BungeeCord.getBoolean()) {
 						BungeeCordUtil.setupUtil();
 					}
 					return true;
 				}else{
-					Messaging.sendError(sender, "You do not have permission for this!");
+					Messaging.sendError(sender, LanguageSettings.Commands_NoPermission.getSetting());
 				}
 			}else{
-				Messaging.sendError(sender, "Wrong Args. Use /commandnpc reload");
+				Messaging.sendError(sender, LanguageSettings.Commands_WrongArgs.getSetting());
 			}
 		}else{
-			Messaging.sendError(sender, "Wrong Args. Use /commandnpc reload");
+			Messaging.sendError(sender, LanguageSettings.Commands_WrongArgs.getSetting());
 		}
 		return false;
 	}

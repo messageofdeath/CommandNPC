@@ -1,9 +1,13 @@
 package me.messageofdeath.CommandNPC.Listeners;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
 
 import me.messageofdeath.CommandNPC.CommandNPC;
 import me.messageofdeath.CommandNPC.Database.ClickType;
+import me.messageofdeath.CommandNPC.Database.LanguageSettings.LanguageSettings;
+import me.messageofdeath.CommandNPC.Database.PluginSettings.PluginSettings;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCCommand;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCData;
 import me.messageofdeath.CommandNPC.Utilities.BungeeCord.BungeeCordUtil;
@@ -25,8 +29,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 public class NPCListener implements Listener {
 
-	private ArrayList<Player> coolingDown = new ArrayList<Player>();
-	private long delay = CommandNPC.getConfigX().getCoolDown();
+	private ArrayList<UUID> coolingDown = new ArrayList<UUID>();
+	private long delay = PluginSettings.CoolDown.getInteger();
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onNPCDelete(NPCRemoveEvent event) {
@@ -37,8 +41,10 @@ public class NPCListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onRight(NPCRightClickEvent event) {
-		if (coolingDown.contains(event.getClicker()) && CommandNPC.getCommandManager().hasNPCData(event.getNPC().getId())) {
-			Messaging.send(event.getClicker(), "You cannot do this yet!");
+		if (coolingDown.contains(event.getClicker().getUniqueId()) && CommandNPC.getCommandManager().hasNPCData(event.getNPC().getId())) {
+			if(PluginSettings.CooldownMessage.getBoolean()) {
+				Messaging.send(event.getClicker(), LanguageSettings.CmdNPC_Cooldown.getSetting());
+			}
 			return;
 		}
 		this.onClick(event.getClicker(), event.getNPC(), ClickType.RIGHT);
@@ -46,8 +52,10 @@ public class NPCListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onLeft(NPCLeftClickEvent event) {
-		if (coolingDown.contains(event.getClicker()) && CommandNPC.getCommandManager().hasNPCData(event.getNPC().getId())) {
-			Messaging.send(event.getClicker(), "You cannot do this yet!");
+		if (coolingDown.contains(event.getClicker().getUniqueId()) && CommandNPC.getCommandManager().hasNPCData(event.getNPC().getId())) {
+			if(PluginSettings.CooldownMessage.getBoolean()) {
+				Messaging.send(event.getClicker(), LanguageSettings.CmdNPC_Cooldown.getSetting());
+			}
 			return;
 		}
 		this.onClick(event.getClicker(), event.getNPC(), ClickType.LEFT);
@@ -55,17 +63,23 @@ public class NPCListener implements Listener {
 
 	private void onClick(final Player player, NPC npc, ClickType clickType) {
 		if (CommandNPC.getCommandManager().hasNPCData(npc.getId())) {
-			coolingDown.add(player);
+			coolingDown.add(player.getUniqueId());
 			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
 			scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					coolingDown.remove(player);
+					coolingDown.remove(player.getUniqueId());
 				}
-			}, delay);
+			}, this.delay);
 			NPCData data = CommandNPC.getCommandManager().getNPCData(npc.getId());
 			boolean isOp = player.isOp();
-			for(NPCCommand command : data.getCommands()) {
+			ArrayList<NPCCommand> commands = new ArrayList<NPCCommand>();
+			if(data.isRandom()) {
+				commands.add(data.getCommands().get(new Random().nextInt(data.getCommands().size())));
+			}else{
+				commands = data.getCommands();
+			}
+			for(NPCCommand command : commands) {
 				if(command.getClickType() == clickType || command.getClickType() == ClickType.BOTH) {
 					if(player.hasPermission(command.getPermission()) || command.getPermission().equalsIgnoreCase("noPerm") || command.getPermission().isEmpty()) {
 						//------------ Economy ------------
@@ -73,24 +87,25 @@ public class NPCListener implements Listener {
 							if(CommandNPC.getEcon().has(player, command.getCost())) {
 								CommandNPC.getEcon().withdrawPlayer(player, command.getCost());
 							}else{
-								Messaging.sendError(player, "You do not have enough money for this!");
+								Messaging.sendError(player, LanguageSettings.CmdNPC_NoMoney.getSetting());
 								return;
 							}
 						}
 						//------------ BungeeCord ------------
 						if(command.getCommand().toLowerCase().startsWith("server")) {
-							if(CommandNPC.getConfigX().isBungeeCord()) {
+							if(PluginSettings.BungeeCord.getBoolean()) {
 								String[] args = command.getCommand().split(" ");
 								if(args.length == 2) {
-									BungeeCordUtil.sendPlayerToServer(player, args[1]);
 									if(command.getDelay() > 0) {
 										scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), new Runnable() {
 											@Override
 											public void run() {
+												BungeeCordUtil.sendPlayerToServer(player, args[1]);
 												CommandNPC.getInstance().log("Sent '"+player.getName()+"' to server '"+args[1]+"'!", true);
 											}
 										}, command.getDelay());
 									}else{
+										BungeeCordUtil.sendPlayerToServer(player, args[1]);
 										CommandNPC.getInstance().log("Sent '"+player.getName()+"' to server '"+args[1]+"'!", true);
 									}
 									return;
@@ -114,15 +129,15 @@ public class NPCListener implements Listener {
 										@Override
 										public void run() {
 											player.chat("/" + command.getCommand().replace("%name", player.getName()));
-											if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
-												Messaging.send(player, "Command Executed.");
+											if(PluginSettings.ExecuteCommandMessage.getBoolean()) {
+												Messaging.send(player, LanguageSettings.CmdNPC_Executed.getSetting());
 											}
 										}
 									}, command.getDelay());
 								}else{
 									player.chat("/" + command.getCommand().replace("%name", player.getName()));
-									if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
-										Messaging.send(player, "Command Executed.");
+									if(PluginSettings.ExecuteCommandMessage.getBoolean()) {
+										Messaging.send(player, LanguageSettings.CmdNPC_Executed.getSetting());
 									}
 								}
 							}finally{
@@ -134,20 +149,20 @@ public class NPCListener implements Listener {
 									@Override
 									public void run() {
 										Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
-										if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
-											Messaging.send(player, "Command Executed.");
+										if(PluginSettings.ExecuteCommandMessage.getBoolean()) {
+											Messaging.send(player, LanguageSettings.CmdNPC_Executed.getSetting());
 										}
 									}
 								}, command.getDelay());
 							}else{
 								Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
-								if(CommandNPC.getConfigX().isExecuteCommandMessage()) {
-									Messaging.send(player, "Command Executed.");
+								if(PluginSettings.ExecuteCommandMessage.getBoolean()) {
+									Messaging.send(player, LanguageSettings.CmdNPC_Executed.getSetting());
 								}
 							}
 						}
 					}else{
-						Messaging.sendError(player, "You do not have enough money for this!");
+						Messaging.sendError(player, LanguageSettings.Commands_NoPermission.getSetting());
 					}
 				}//Wrong clickType (Do nothing)
 			}

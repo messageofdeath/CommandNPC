@@ -3,7 +3,10 @@ package me.messageofdeath.CommandNPC;
 import java.util.ArrayList;
 
 import me.messageofdeath.CommandNPC.Database.CommandDatabase;
-import me.messageofdeath.CommandNPC.Database.Config;
+import me.messageofdeath.CommandNPC.Database.LanguageSettings.LanguageConfiguration;
+import me.messageofdeath.CommandNPC.Database.LanguageSettings.LanguageSettings;
+import me.messageofdeath.CommandNPC.Database.PluginSettings.PluginConfiguration;
+import me.messageofdeath.CommandNPC.Database.PluginSettings.PluginSettings;
 import me.messageofdeath.CommandNPC.Listeners.NPCListener;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCDataManager;
 import me.messageofdeath.CommandNPC.Utilities.BungeeCord.BungeeCordUtil;
@@ -18,15 +21,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandNPC extends JavaPlugin {
 
-	public static final String prefix = CommandNPC.getColorized("&8[&2CommandNPC&8] &6");
+	public static String prefix;
 
 	private CitizenCommandRegister commandRegister;
 
 	private static CommandDatabase database;
+	
+	private static LanguageConfiguration langConfig;
 
 	private static JavaPlugin instance;
 
-	private static Config config;
+	private static PluginConfiguration config;
 
 	private static NPCDataManager manager;
 
@@ -36,6 +41,13 @@ public class CommandNPC extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		CommandNPC.config = new PluginConfiguration(this);
+		CommandNPC.config.initConfiguration();
+		CommandNPC.config.loadConfiguration();
+		CommandNPC.langConfig = new LanguageConfiguration(this);
+		CommandNPC.langConfig.initConfiguration();
+		CommandNPC.langConfig.loadConfiguration();
+		CommandNPC.prefix = CommandNPC.getColorized(LanguageSettings.General_PluginTag.getSetting());
 		/** --------------Checking for Dependencies-------------- **/
 		if (!getServer().getPluginManager().isPluginEnabled("Citizens")) {
 			this.logError("Required Dependencies", "CommandNPC", "onEnable()", "Citizens 2 not found! CommandNPC will now shut down.");
@@ -47,7 +59,6 @@ public class CommandNPC extends JavaPlugin {
 		/** --------------Initiation of Databases, Managers, and Parsers-------------- **/
 		CommandNPC.instance = this;
 		CommandNPC.manager = new NPCDataManager();
-		CommandNPC.config = new Config(this);
 		this.commandRegister = new CitizenCommandRegister(this);
 		/** --------------Initiation of the Listener-------------- **/
 		super.getServer().getPluginManager().registerEvents(new NPCListener(), this);
@@ -60,7 +71,7 @@ public class CommandNPC extends JavaPlugin {
 		this.log("Injecting command info into Citizens.", true);
 		this.commandRegister.registerCitizenCommand(CitizenCommands.class);
 		super.getCommand("commandnpc").setExecutor(new ReloadCommand());
-		if(CommandNPC.getConfigX().isBungeeCord()) {
+		if(PluginSettings.BungeeCord.getBoolean()) {
 			this.log("Setting up BungeeCord", true);
 			BungeeCordUtil.setupUtil();
 		}
@@ -72,7 +83,7 @@ public class CommandNPC extends JavaPlugin {
 		if (database != null) {
 			database.saveDatabase();
 		}
-		if(CommandNPC.getConfigX().isBungeeCord()) {
+		if(PluginSettings.BungeeCord.getBoolean()) {
 			this.log("Disabling BungeeCord Support", true);
 			BungeeCordUtil.disableUtil();
 		}
@@ -101,8 +112,8 @@ public class CommandNPC extends JavaPlugin {
 	public static CommandDatabase getCommandDatabase() {
 		return database;
 	}
-
-	public static Config getConfigX() {
+	
+	public static PluginConfiguration getConfigX() {
 		return config;
 	}
 

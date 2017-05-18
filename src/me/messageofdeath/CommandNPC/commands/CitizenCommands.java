@@ -6,6 +6,8 @@ import org.bukkit.command.CommandSender;
 
 import me.messageofdeath.CommandNPC.CommandNPC;
 import me.messageofdeath.CommandNPC.Database.ClickType;
+import me.messageofdeath.CommandNPC.Database.LanguageSettings.LanguageSettings;
+import me.messageofdeath.CommandNPC.Database.PluginSettings.PluginSettings;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCCommand;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCData;
 import me.messageofdeath.CommandNPC.Utilities.Utilities;
@@ -18,13 +20,14 @@ import net.citizensnpcs.api.util.Messaging;
 @Requirements(selected = true, ownership = true)
 public class CitizenCommands {
 
-	@Command(aliases = { "npc" }, usage = "cmdadd [-c console] [-o Op] [--v price] [--t clickType] [--d delay] [--p custom.permission.node] <command...>", 
-			desc = "Add a command to a NPC", modifiers = { "cmdadd" }, min = 2, flags = "oc", permission = "commandnpc.admin")
+	@Command(aliases = { "npc" }, usage = "cmdadd [-c console] [-o Op] [-r random] [--v price] [--t clickType] [--d delay] [--p custom.permission.node] <command...>", 
+			desc = "Add a command to a NPC", modifiers = { "cmdadd" }, min = 2, flags = "cor", permission = "commandnpc.admin")
 	public void addCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int id = npc.getId();
 		String permission = "noPerm";
-		ClickType clickType = CommandNPC.getConfigX().getClickType();
+		ClickType clickType = ClickType.valueOf(PluginSettings.ClickType.getSetting());
 		boolean inConsole = false;
+		boolean isRandom = false;
 		boolean asOp = false;
 		String cmd = null;
 		double cost = 0;
@@ -36,6 +39,9 @@ public class CitizenCommands {
 		if (args.hasFlag('o')) {
 			asOp = true;
 		}
+		if (args.hasFlag('r')) {
+			isRandom = true;
+		}
 		if(args.hasValueFlag("t")) {
 			String value = args.getFlag("t");
 			if(value.equalsIgnoreCase("left")) {
@@ -45,7 +51,7 @@ public class CitizenCommands {
 			}else if(value.equalsIgnoreCase("both")) {
 				clickType = ClickType.BOTH;
 			}else{
-				Messaging.sendError(sender, "For value flag 't' you must use 'left', 'right', or 'both'!");
+				Messaging.sendError(sender, LanguageSettings.Commands_Citizens_ValueFlagT.getSetting());
 			}
 		}
 		if (args.hasValueFlag("p")) {
@@ -55,32 +61,33 @@ public class CitizenCommands {
 			if(Utilities.isDouble(args.getFlag("v"))) {
 				cost = args.getFlagDouble("v");
 			}else{
-				Messaging.sendError(sender, "The cost variable must be numeric!");
+				Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "price"));
 			}
 		}
 		if (args.hasValueFlag("d")) {
 			if(Utilities.isInteger(args.getFlag("d"))) {
 				delay = args.getFlagInteger("d");
 			}else{
-				Messaging.sendError(sender, "The delay variable must be numeric!");
+				Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "delay"));
 			}
 		}
 		cmd = args.getJoinedStrings(1);
 		if (cmd != null) {
-			NPCCommand npcCommand = new NPCCommand(cmd, permission, clickType, inConsole, asOp, cost, delay);
+			NPCCommand npcCommand = new NPCCommand(cmd, permission, clickType, inConsole, asOp, isRandom, cost, delay);
 			if (CommandNPC.getCommandManager().hasNPCData(id)) {
 				CommandNPC.getCommandManager().getNPCData(id).addCommand(npcCommand);
 			} else {
 				CommandNPC.getCommandManager().addNPCData(new NPCData(id, npcCommand));
 			}
 			CommandNPC.getCommandDatabase().saveDatabase();
-			Messaging.send(sender, "You have successfully added the command to the npc!");
+			Messaging.send(sender, LanguageSettings.Commands_Citizens_Add.getSetting());
 		}else{
-			Messaging.send(sender, "You didn't input a command!");
+			Messaging.send(sender, LanguageSettings.Commands_Citizens_NoCmdInput.getSetting());
 		}
 	}
 	
-	@Command(aliases = { "npc" }, usage = "cmdremove <id>", desc = "Remove a command on the NPC.", modifiers = { "cmdremove" }, min = 2, max = 2, permission = "commandnpc.admin")
+	@Command(aliases = { "npc" }, usage = "cmdremove <id>", desc = "Remove a command on the NPC.", modifiers = { "cmdremove" }, min = 2, max = 2, 
+			permission = "commandnpc.admin")
 	public void removeCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int id = npc.getId();
 		if(CommandNPC.getCommandManager().hasNPCData(id)) {
@@ -88,15 +95,14 @@ public class CitizenCommands {
 			if(Utilities.isInteger(args.getString(1))) {
 				if(data.hasCommand(args.getInteger(1))) {
 					data.removeCommand(args.getInteger(1));
-					Messaging.send(sender, "You have successfully removed the command!");
+					Messaging.send(sender, LanguageSettings.Commands_Citizens_Removed.getSetting());
 				}else{
-					Messaging.sendError(sender, "There is not a command with that ID!");
-				}
+					Messaging.sendError(sender, LanguageSettings.Commands_DoesNotExist.getSetting().replace("%type", "ID"));			}
 			}else{
-				Messaging.sendError(sender, "You must enter a number between 1 and " + data.getCommands().size() + "!");
+				Messaging.sendError(sender, LanguageSettings.Commands_Citizens_NumBetween.getSetting().replace("%num1", "1").replace("%num2", data.getCommands().size() + ""));
 			}
 		}else{
-			Messaging.sendError(sender, "There are no set commands at the moment for this NPC!");
+			Messaging.sendError(sender, LanguageSettings.Commands_Citizens_NoCommands.getSetting());
 		}
 	}
 	
@@ -110,63 +116,73 @@ public class CitizenCommands {
 				NPCData data = CommandNPC.getCommandManager().getNPCData(npcID);
 				if(data.hasCommand(id)) {
 					NPCCommand command = data.getCommand(id);
-					Messaging.send(sender, CommandNPC.prefix + "You have set the following variables:");
+					Messaging.send(sender, CommandNPC.prefix + LanguageSettings.Commands_SetTo_Header.getSetting());
 					if(args.hasFlag('c')) {
 						command.setInConsole(!command.inConsole());
-						Messaging.send(sender, "Console to: " + command.inConsole());
+						Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Console")
+								.replace("%value", command.inConsole() + ""));
 					}
 					if(args.hasFlag('o')) {
 						command.setAsOP(!command.asOp());
-						Messaging.send(sender, "Op to: " + command.asOp());
+						Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Op")
+								.replace("%value", command.asOp() + ""));
 					}
 					if(args.hasValueFlag("p")) {
 						command.setPermission(args.getFlag("p"));
-						Messaging.send(sender, "Permission to: " + command.getPermission());
+						Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Permission")
+								.replace("%value", command.getPermission()));
 					}
 					if(args.hasValueFlag("v")) {
 						if(Utilities.isDouble(args.getFlag("v"))) {
 							command.setCost(args.getFlagDouble("v"));
-							Messaging.send(sender, "Cost to: " + command.getCost());
+							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Cost")
+									.replace("%value", command.getCost() + ""));
 						}else{
-							Messaging.sendError(sender, "The cost variable must be numeric!");
+							Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "cost"));
 						}
 					}
 					if (args.hasValueFlag("d")) {
 						if(Utilities.isInteger(args.getFlag("d"))) {
 							command.setDelay(args.getFlagInteger("d"));
-							Messaging.send(sender, "Delay to: " + command.getDelay());
+							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Delay")
+									.replace("%value", command.getDelay() + ""));
 						}else{
-							Messaging.sendError(sender, "The delay variable must be numeric!");
+							Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "delay"));
 						}
 					}
 					if(args.hasValueFlag("t")) {
 						String value = args.getFlag("t");
 						if(value.equalsIgnoreCase("left")) {
 							command.setClickType(ClickType.LEFT);
-							Messaging.send(sender, "ClickType to: " + command.getClickType().name().toLowerCase());
+							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "ClickType")
+									.replace("%value", "Left"));
 						}else if(value.equalsIgnoreCase("right")) {
 							command.setClickType(ClickType.RIGHT);
-							Messaging.send(sender, "ClickType to: " + command.getClickType().name().toLowerCase());
+							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "ClickType")
+									.replace("%value", "Right"));
 						}else if(value.equalsIgnoreCase("both")) {
 							command.setClickType(ClickType.BOTH);
-							Messaging.send(sender, "ClickType to: " + command.getClickType().name().toLowerCase());
+							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "ClickType")
+									.replace("%value", "Both"));
 						}else{
-							Messaging.sendError(sender, "For value flag 't' you must use 'left', 'right', or 'both'!");
+							Messaging.sendError(sender, LanguageSettings.Commands_Citizens_ValueFlagT.getSetting());
 						}
 					}
 					if(args.argsLength() > 2) {
 						command.setCommand(args.getJoinedStrings(2));
-						Messaging.send(sender, "Command to: " + command.getCommand());
+						Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Command")
+								.replace("%value", command.getCommand() + ""));
 					}
 					CommandNPC.getCommandDatabase().saveDatabase();
 				}else{
-					Messaging.sendError(sender, "You must enter a number between 1 and " + data.getCommands().size() + "!");
+					Messaging.sendError(sender, LanguageSettings.Commands_Citizens_NumBetween.getSetting().replace("%num1", "1")
+							.replace("%num2", data.getCommands().size() + ""));
 				}
 			}else{
-				Messaging.sendError(sender, "There are no set commands at the moment for this NPC!");
+				Messaging.sendError(sender, LanguageSettings.Commands_Citizens_NoCommands.getSetting());
 			}
 		}else{
-			Messaging.sendError(sender, "The ID must be numeric!");
+			Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "ID"));
 		}
 	}
 	
@@ -184,27 +200,34 @@ public class CitizenCommands {
 						commands = new ArrayList<NPCCommand>();
 						commands.add(data.getCommand(cmdID));
 					}else{
-						Messaging.sendError(sender, "You must enter a number between 1 and " + data.getCommands().size() + "!");
+						Messaging.sendError(sender, LanguageSettings.Commands_Citizens_NumBetween.getSetting().replace("%num1", "1")
+								.replace("%num2", data.getCommands().size() + ""));
 						return;
 					}
 				}else{
-					Messaging.sendError(sender, "The ID must be numeric!");
+					Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "ID"));
 					return;
 				}
 			}else{
 				commands = data.getCommands();
 			}
-			Messaging.send(sender, CommandNPC.prefix + "Information for NPC '"+id+"'");
+			Messaging.send(sender, CommandNPC.prefix + LanguageSettings.Commands_List_InfoHeader.getSetting().replace("%id", id + ""));
+			String prefix = LanguageSettings.Commands_List_InfoLinePrefix.getSetting();
+			String infoLine = LanguageSettings.Commands_List_InfoLine.getSetting();
+			String spacer = " &8| ";
 			for(NPCCommand command : commands) {
-				Messaging.send(sender, "  &7Command ID: &6" + command.getID());
-				Messaging.send(sender, " &8 -&2 Command: &b" + command.getCommand());
-				Messaging.send(sender, " &8 -&2 Permission: &b" + command.getPermission());
-				Messaging.send(sender, " &8 -&2 ClickType: &b" + command.getClickType().name().toLowerCase() + " &8| &2Cost: &b" + command.getCost()
-				 + " &8| &2Delay: &b" + command.getDelay() + " ticks");
+				Messaging.send(sender, LanguageSettings.Commands_List_InfoLineHeader.getSetting().replace("%name", "Command ID")
+						.replace("%value", "" + command.getID()));
+				Messaging.send(sender, prefix + infoLine.replace("%name", "Command").replace("%value", command.getCommand()));
+				Messaging.send(sender, prefix + infoLine.replace("%name", "Permission").replace("%value", command.getPermission()));
+				Messaging.send(sender, prefix + infoLine.replace("%name", "ClickType").replace("%value", command.getClickType().name().toLowerCase())
+						+ spacer + infoLine.replace("%name", "Cost").replace("%value", command.getCost() + ""));
 				Messaging.send(sender, " &8 -&2 In Console: &b" + command.inConsole() + " &8| &2As Op: &b" + command.asOp());
+				Messaging.send(sender, prefix + infoLine.replace("%name", "In Console").replace("%value", command.inConsole() + "")
+						+ spacer + infoLine.replace("%name", "As Op").replace("%value", command.asOp() + ""));
 			}
 		}else{
-			Messaging.sendError(sender, "There are no set commands at the moment for this NPC!");
+			Messaging.sendError(sender, LanguageSettings.Commands_Citizens_NoCommands.getSetting());
 		}
 	}
 	
@@ -214,9 +237,9 @@ public class CitizenCommands {
 		if(CommandNPC.getCommandManager().hasNPCData(id)) {
 			CommandNPC.getCommandManager().removeNPCData(id);
 			CommandNPC.getCommandDatabase().deleteNPC(id);
-			Messaging.send(sender, "You have successfully reset the commands for this NPC!");
+			Messaging.send(sender, LanguageSettings.Commands_Citizens_Reset.getSetting());
 		}else{
-			Messaging.sendError(sender, "There are no set commands at the moment for this NPC!");
+			Messaging.sendError(sender, LanguageSettings.Commands_Citizens_NoCommands.getSetting());
 		}
 	}
 }
