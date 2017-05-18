@@ -222,7 +222,6 @@ public class CitizenCommands {
 				Messaging.send(sender, prefix + infoLine.replace("%name", "Permission").replace("%value", command.getPermission()));
 				Messaging.send(sender, prefix + infoLine.replace("%name", "ClickType").replace("%value", command.getClickType().name().toLowerCase())
 						+ spacer + infoLine.replace("%name", "Cost").replace("%value", command.getCost() + ""));
-				Messaging.send(sender, " &8 -&2 In Console: &b" + command.inConsole() + " &8| &2As Op: &b" + command.asOp());
 				Messaging.send(sender, prefix + infoLine.replace("%name", "In Console").replace("%value", command.inConsole() + "")
 						+ spacer + infoLine.replace("%name", "As Op").replace("%value", command.asOp() + ""));
 			}
