@@ -68,7 +68,7 @@ public class CommandDatabase {
 		for (NPCData data : CommandNPC.getCommandManager().getNPCDatas()) {
 			ArrayList<String> commands = new ArrayList<String>();
 			for (NPCCommand command : data.getCommands()) {
-				commands.add(command.getID() + "~~~" + command.getCommand() + "~~~" + command.getPermission() + "~~~" + command.getClickType().toString() + "~~~" + 
+				commands.add(command.getID() + "~~~" + command.getCommand() + "~~~" + command.getPermission() + "~~~" + command.getClickType().name() + "~~~" + 
 						command.inConsole() + "~~~" + command.asOp() + "~~~" + command.isRandom() + "~~~" + command.getCost() + "~~~" + command.getDelay());
 			}
 			database.set("NPCS." + data.getId() + ".Commands", commands);
@@ -76,18 +76,6 @@ public class CommandDatabase {
 	}
 	
 	private ClickType getClickType(String[] args) {
-		ClickType clickType = null;
-		if(args.length > 3) {
-			if(args[3].equalsIgnoreCase("left")) {
-				clickType = ClickType.LEFT;
-			}else if(args[3].equalsIgnoreCase("right")) {
-				clickType = ClickType.RIGHT;
-			}else if(args[3].equalsIgnoreCase("both")) {
-				clickType = ClickType.BOTH;
-			}else{
-				clickType = ClickType.valueOf(PluginSettings.ClickType.getSetting());
-			}
-		}
-		return clickType;
+		return args.length > 3 && ClickType.hasClickType(args[3]) ? ClickType.getClickType(args[3]) : ClickType.getClickType(PluginSettings.ClickType.getSetting());
 	}
 }

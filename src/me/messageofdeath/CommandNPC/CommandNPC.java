@@ -11,6 +11,9 @@ import me.messageofdeath.CommandNPC.Listeners.NPCListener;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCDataManager;
 import me.messageofdeath.CommandNPC.Utilities.BungeeCord.BungeeCordUtil;
 import me.messageofdeath.CommandNPC.Utilities.CitizenBackend.CitizenCommandRegister;
+import me.messageofdeath.CommandNPC.Utilities.Updater.Updater;
+import me.messageofdeath.CommandNPC.Utilities.Updater.Updater.UpdateResult;
+import me.messageofdeath.CommandNPC.Utilities.Updater.Updater.UpdateType;
 import me.messageofdeath.CommandNPC.commands.CitizenCommands;
 import me.messageofdeath.CommandNPC.commands.ReloadCommand;
 import net.milkbowl.vault.economy.Economy;
@@ -50,7 +53,7 @@ public class CommandNPC extends JavaPlugin {
 			return;
 		}
 		this.setupEconomy();
-				
+		
 		/** --------------Initiation of Databases, Managers, and Parsers-------------- **/
 		CommandNPC.instance = this;
 		CommandNPC.manager = new NPCDataManager();
@@ -70,6 +73,12 @@ public class CommandNPC extends JavaPlugin {
 			this.log("Setting up BungeeCord", true);
 			BungeeCordUtil.setupUtil();
 		}
+		/*Updater update = new Updater(this, 72554, this.getFile(), UpdateType.NO_DOWNLOAD, true);
+		if(update.getResult() == UpdateResult.NO_UPDATE) {
+			this.log("No update found.", true);
+		}else if(update.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+			this.logError("Updater", "CommandNPC", "onEnable()", "There is an update available for this plugin! " + update.getLatestName() + " is available!");
+		}*/
 		this.log("CommandNPC successfully loaded!", true);
 	}
 

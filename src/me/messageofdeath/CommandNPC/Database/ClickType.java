@@ -1,12 +1,18 @@
 package me.messageofdeath.CommandNPC.Database;
 
 public enum ClickType {
+	
+	LEFT(new String[] {"punch"}),
 
-	LEFT(),
+	RIGHT(new String[] {"interact"}),
 
-	RIGHT(),
-
-	BOTH();
+	BOTH(new String[] {"all"});
+	
+	private String[] alternatives;
+	
+	ClickType(String[] alternatives) {
+		this.alternatives = alternatives;
+	}
 	
 	public static boolean hasClickType(String clickType) {
 		return ClickType.getClickType(clickType) != null;
@@ -16,6 +22,11 @@ public enum ClickType {
 		for(ClickType type : ClickType.values()) {
 			if(type.name().equalsIgnoreCase(clickType)) {
 				return type;
+			}
+			for(String alternatives : type.alternatives) {
+				if(clickType.equalsIgnoreCase(alternatives)) {
+					return type;
+				}
 			}
 		}
 		return null;

@@ -1,6 +1,6 @@
 name: CommandNPC
 author: messageofdeath
-version: 1.8.8
+version: 1.8.8.2
 main: me.messageofdeath.CommandNPC.CommandNPC
 depend: [Citizens]
 softdepend: [Vault]

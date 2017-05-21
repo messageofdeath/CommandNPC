@@ -51,12 +51,8 @@ public class CitizenCommands {
 		}
 		if(args.hasValueFlag("t")) {
 			String value = args.getFlag("t");
-			if(value.equalsIgnoreCase("left")) {
-				clickType = ClickType.LEFT;
-			}else if(value.equalsIgnoreCase("right")) {
-				clickType = ClickType.RIGHT;
-			}else if(value.equalsIgnoreCase("both")) {
-				clickType = ClickType.BOTH;
+			if(ClickType.hasClickType(value)) {
+				clickType = ClickType.getClickType(value);
 			}else{
 				Messaging.sendError(sender, LanguageSettings.Commands_Citizens_ValueFlagT.getSetting());
 			}
@@ -159,18 +155,10 @@ public class CitizenCommands {
 					}
 					if(args.hasValueFlag("t")) {
 						String value = args.getFlag("t");
-						if(value.equalsIgnoreCase("left")) {
-							command.setClickType(ClickType.LEFT);
+						if(ClickType.hasClickType(value)) {
+							command.setClickType(ClickType.getClickType(value));
 							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "ClickType")
-									.replace("%value", "Left"));
-						}else if(value.equalsIgnoreCase("right")) {
-							command.setClickType(ClickType.RIGHT);
-							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "ClickType")
-									.replace("%value", "Right"));
-						}else if(value.equalsIgnoreCase("both")) {
-							command.setClickType(ClickType.BOTH);
-							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "ClickType")
-									.replace("%value", "Both"));
+									.replace("%value", command.getClickType().name()));
 						}else{
 							Messaging.sendError(sender, LanguageSettings.Commands_Citizens_ValueFlagT.getSetting());
 						}
