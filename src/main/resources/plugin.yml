@@ -1,0 +1,5 @@
+name: CommandNPC
+author: razorrider7
+version: 1.8.0
+main: me.razorrider7.commandnpc.CommandNPC
+depend: [Citizens]
