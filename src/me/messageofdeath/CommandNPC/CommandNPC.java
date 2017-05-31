@@ -11,9 +11,7 @@ import me.messageofdeath.CommandNPC.Listeners.NPCListener;
 import me.messageofdeath.CommandNPC.NPCDataManager.NPCDataManager;
 import me.messageofdeath.CommandNPC.Utilities.BungeeCord.BungeeCordUtil;
 import me.messageofdeath.CommandNPC.Utilities.CitizenBackend.CitizenCommandRegister;
-import me.messageofdeath.CommandNPC.Utilities.Updater.Updater;
-import me.messageofdeath.CommandNPC.Utilities.Updater.Updater.UpdateResult;
-import me.messageofdeath.CommandNPC.Utilities.Updater.Updater.UpdateType;
+import me.messageofdeath.CommandNPC.Utilities.Metrics.Metrics;
 import me.messageofdeath.CommandNPC.commands.CitizenCommands;
 import me.messageofdeath.CommandNPC.commands.ReloadCommand;
 import net.milkbowl.vault.economy.Economy;
@@ -41,9 +39,13 @@ public class CommandNPC extends JavaPlugin {
 	private static Economy econ = null;
 	
 	private static boolean econAvailable = false;
+	
+	@SuppressWarnings("unused")
+	private static Metrics metrics;
 
 	@Override
 	public void onEnable() {
+		CommandNPC.metrics = new Metrics(this);
 		this.reloadConfigX();
 		CommandNPC.prefix = CommandNPC.getColorized(LanguageSettings.General_PluginTag.getSetting());
 		/** --------------Checking for Dependencies-------------- **/
