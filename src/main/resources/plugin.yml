@@ -1,0 +1,9 @@
+name: CommandNPC
+author: messageofdeath
+version: 1.8.8.2
+main: me.messageofdeath.commandnpc.CommandNPC
+depend: [Citizens]
+softdepend: [Vault]
+commands:
+  commandnpc:
+    description: Reload this plugin.
