@@ -11,6 +11,7 @@ import me.messageofdeath.commandnpc.Listeners.NPCListener;
 import me.messageofdeath.commandnpc.NPCDataManager.NPCDataManager;
 import me.messageofdeath.commandnpc.Utilities.BungeeCord.BungeeCordUtil;
 import me.messageofdeath.commandnpc.Utilities.CitizenBackend.CitizenCommandRegister;
+import me.messageofdeath.commandnpc.Utilities.queue.QueueSystem;
 import me.messageofdeath.commandnpc.commands.CitizenCommands;
 import me.messageofdeath.commandnpc.commands.ReloadCommand;
 import net.milkbowl.vault.economy.Economy;
@@ -33,6 +34,8 @@ public class CommandNPC extends JavaPlugin {
 	private static NPCDataManager manager;
 
 	private static Economy econ = null;
+
+	private static QueueSystem queueSystem;
 	
 	private static boolean econAvailable = false;
 	
@@ -41,6 +44,10 @@ public class CommandNPC extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		CommandNPC.queueSystem = new QueueSystem(1);
+		LanguageConfiguration langConfig = new LanguageConfiguration(this);
+		langConfig.initConfiguration();
+		langConfig.loadConfiguration();
 		this.reloadConfigX();
 		CommandNPC.prefix = CommandNPC.getColorized(LanguageSettings.General_PluginTag.getSetting());
 		/** --------------Checking for Dependencies-------------- **/
@@ -70,13 +77,7 @@ public class CommandNPC extends JavaPlugin {
 			this.log("Setting up BungeeCord", true);
 			BungeeCordUtil.setupUtil();
 		}
-		/*Updater update = new Updater(this, 72554, this.getFile(), UpdateType.NO_DOWNLOAD, true);
-		if(update.getResult() == UpdateResult.NO_UPDATE) {
-			this.log("No update found.", true);
-		}else if(update.getResult() == UpdateResult.UPDATE_AVAILABLE) {
-			this.logError("Updater", "commandnpc", "onEnable()", "There is an update available for this plugin! " + update.getLatestName() + " is available!");
-		}*/
-		this.log("commandnpc successfully loaded!", true);
+		this.log("CommandNPC successfully loaded!", true);
 	}
 
 	@Override
@@ -84,6 +85,7 @@ public class CommandNPC extends JavaPlugin {
 		if (database != null) {
 			database.saveDatabase();
 		}
+		queueSystem.stop();
 		if(PluginSettings.BungeeCord.getBoolean()) {
 			this.log("Disabling BungeeCord Support", true);
 			BungeeCordUtil.disableUtil();
@@ -92,10 +94,6 @@ public class CommandNPC extends JavaPlugin {
 
 	public static Economy getEcon() {
 		return econ;
-	}
-
-	public String getPrefix() {
-		return CommandNPC.prefix;
 	}
 
 	public static String getColorized(String input) {
@@ -110,6 +108,10 @@ public class CommandNPC extends JavaPlugin {
 		return manager;
 	}
 
+	public static QueueSystem getQueueSystem() {
+		return queueSystem;
+	}
+
 	public static CommandDatabase getCommandDatabase() {
 		return database;
 	}
@@ -122,9 +124,6 @@ public class CommandNPC extends JavaPlugin {
 		config = new PluginConfiguration(this);
 		config.initConfiguration();
 		config.loadConfiguration();
-		LanguageConfiguration langConfig = new LanguageConfiguration(this);
-		langConfig.initConfiguration();
-		langConfig.loadConfiguration();
 	}
 
 	public static CommandNPC getInstance() {
@@ -176,17 +175,17 @@ public class CommandNPC extends JavaPlugin {
 
 	private void setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
-			log("Vault not found! Economy support for commandnpc has been disabled.", true);
+			log("Vault not found! Economy support for CommandNPC has been disabled.", true);
 			return;
 		}
 		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
 		if (rsp == null) {
-			log("Vault compatible economy not found! Economy support for commandnpc has been disabled.", true);
+			log("Vault compatible economy not found! Economy support for CommandNPC has been disabled.", true);
 			return;
 		}
 		econ = rsp.getProvider();
 		if (econ != null) {
-			log("Vault compatible economy found! Economy support for commandnpc has been enabled.", true);
+			log("Vault compatible economy found! Economy support for CommandNPC has been enabled.", true);
 			econAvailable = true;
 		}
 	}

@@ -70,7 +70,7 @@ public class NPCData {
 	
 	public void checkPositions() {
 		ArrayList<NPCCommand> commands = this.commands;
-		Collections.sort(commands, comparePosition());
+		commands.sort(comparePosition());
 		if (!commands.isEmpty()) {
 			int lastPosition = 0;
 			int difference;
@@ -96,7 +96,7 @@ public class NPCData {
 					lastPosition = commandx.getID();
 				}
 			}
-			Collections.sort(commands, comparePosition());
+			commands.sort(comparePosition());
 			this.commands = commands;
 		}
 	}

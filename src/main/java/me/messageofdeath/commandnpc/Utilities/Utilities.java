@@ -1,7 +1,6 @@
 package me.messageofdeath.commandnpc.Utilities;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class Utilities {
@@ -69,7 +68,7 @@ public class Utilities {
 	
 	public static ArrayList<IDHolder> sortIDs(ArrayList<IDHolder> holders) {
 		if (!holders.isEmpty()) {
-			Collections.sort(holders, Utilities.compareIDs());
+			holders.sort(Utilities.compareIDs());
 			int lastPosition = 0;
 			int difference;
 			IDHolder holder;
@@ -94,7 +93,7 @@ public class Utilities {
 					lastPosition = holder.getID();
 				}
 			}
-			Collections.sort(holders, Utilities.compareIDs());
+			holders.sort(Utilities.compareIDs());
 		}
 		return holders;
 	}
