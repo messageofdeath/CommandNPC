@@ -22,7 +22,7 @@ public class YamlDatabase {
 	public String fileName = null, fileExtension = null, fileLocation = null;
 	public File file = null;
 	public FileConfiguration fileConfig = null;
-	public boolean createdFile = false, saveOnSet = true;
+	public boolean createdFile = false, saveOnSet = true, copyFileOnStart = true;
 	
     /**
 	 * Creates a new instance of YamlDatabase with the default fileLocation.
@@ -47,6 +47,14 @@ public class YamlDatabase {
 		this.fileName = fileName;
 		this.fileExtension = ".yml";
 		this.fileConfig = new YamlConfiguration();
+	}
+
+	public YamlDatabase(JavaPlugin plugin, String fileName, boolean copyFileOnStart) {
+		this.plugin = plugin;
+		this.fileName = fileName;
+		this.fileExtension = ".yml";
+		this.fileConfig = new YamlConfiguration();
+		this.copyFileOnStart = copyFileOnStart;
 	}
 	
     /**
@@ -89,7 +97,7 @@ public class YamlDatabase {
 			if(!this.file.exists()){
 				this.file.getParentFile().mkdirs();
 				this.file.createNewFile();
-				if(this.plugin.getResource(this.fileName + this.fileExtension) != null)
+				if(copyFileOnStart && this.plugin.getResource(this.fileName + this.fileExtension) != null)
 					copy(this.plugin.getResource(this.fileName + this.fileExtension), this.file);
 				this.createdFile = true;
 			}

@@ -13,7 +13,7 @@ public class LanguageConfiguration {
 	}
 
 	public void initConfiguration() {
-		this.config = new YamlDatabase(this.instance, "language");
+		this.config = new YamlDatabase(this.instance, "language", false);
 		this.config.onStartUp();
 		this.config.saveOnSet = false;
 		boolean changes = false;
