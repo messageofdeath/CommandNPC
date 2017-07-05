@@ -1,6 +1,7 @@
 package me.messageofdeath.commandnpc.Listeners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 
@@ -85,14 +86,13 @@ public class NPCListener implements Listener {
 					if(player.hasPermission(command.getPermission()) || command.getPermission().equalsIgnoreCase("noPerm") || command.getPermission().isEmpty()) {
 						//------------ Cooldown ------------
 						if(cooldown.hasCooldown(player.getUniqueId())) {
-							for(Cooldown cd : cooldown.getCooldowns(player.getUniqueId())) {
-								if (cd.getNpcID() == npc.getId() && cd.getCommandID() == command.getID()) {
-									if (command.getCooldownMessage() != null && !command.getCooldownMessage().isEmpty()) {
-										Messaging.sendError(player, command.getCooldownMessage());
-									}
+							if(Arrays.stream(cooldown.getCooldowns(player.getUniqueId())).filter(search ->
+									search.getNpcID() == npc.getId() && search.getCommandID() == command.getID()).findFirst().orElse(null) != null) {
+								if (command.getCooldownMessage() != null && !command.getCooldownMessage().isEmpty()) {
+									Messaging.sendError(player, command.getCooldownMessage());
 								}
+								continue;
 							}
-							continue;
 						}
 						//------------ Economy ------------w
 						if(command.getCost() > 0 && CommandNPC.isEconAvailable()) {
