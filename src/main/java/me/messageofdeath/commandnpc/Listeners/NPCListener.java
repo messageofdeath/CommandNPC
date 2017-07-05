@@ -11,14 +11,13 @@ import me.messageofdeath.commandnpc.Database.PluginSettings.PluginSettings;
 import me.messageofdeath.commandnpc.NPCDataManager.NPCCommand;
 import me.messageofdeath.commandnpc.NPCDataManager.NPCData;
 import me.messageofdeath.commandnpc.Utilities.BungeeCord.BungeeCordUtil;
+import me.messageofdeath.commandnpc.Utilities.CooldownManager.Cooldown;
+import me.messageofdeath.commandnpc.Utilities.CooldownManager.CooldownManager;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRemoveEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.util.Messaging;
-/*import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;*/
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -29,8 +28,13 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 public class NPCListener implements Listener {
 
-	private final ArrayList<UUID> coolingDown = new ArrayList<>();
+	private final ArrayList<UUID> coolingDown = new ArrayList<>();//To prevent server overloads
 	private final long delay = PluginSettings.CoolDown.getInteger();
+	private final CooldownManager cooldown;
+
+	public NPCListener() {
+		cooldown = new CooldownManager();
+	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onNPCDelete(NPCRemoveEvent event) {
@@ -41,7 +45,7 @@ public class NPCListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onRight(NPCRightClickEvent event) {
-		if (coolingDown.contains(event.getClicker().getUniqueId()) && CommandNPC.getCommandManager().hasNPCData(event.getNPC().getId())) {
+		if (CommandNPC.getCommandManager().hasNPCData(event.getNPC().getId()) && coolingDown.contains(event.getClicker().getUniqueId())) {
 			if(PluginSettings.CooldownMessage.getBoolean()) {
 				Messaging.send(event.getClicker(), LanguageSettings.CmdNPC_Cooldown.getSetting());
 			}
@@ -52,7 +56,7 @@ public class NPCListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onLeft(NPCLeftClickEvent event) {
-		if (coolingDown.contains(event.getClicker().getUniqueId()) && CommandNPC.getCommandManager().hasNPCData(event.getNPC().getId())) {
+		if (CommandNPC.getCommandManager().hasNPCData(event.getNPC().getId()) && coolingDown.contains(event.getClicker().getUniqueId())) {
 			if(PluginSettings.CooldownMessage.getBoolean()) {
 				Messaging.send(event.getClicker(), LanguageSettings.CmdNPC_Cooldown.getSetting());
 			}
@@ -63,9 +67,11 @@ public class NPCListener implements Listener {
 
 	private void onClick(final Player player, NPC npc, ClickType clickType) {
 		if (CommandNPC.getCommandManager().hasNPCData(npc.getId())) {
-			coolingDown.add(player.getUniqueId());
 			BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
-			scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), () -> coolingDown.remove(player.getUniqueId()), this.delay);
+			if(delay > 0) {
+				coolingDown.add(player.getUniqueId());
+				scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), () -> coolingDown.remove(player.getUniqueId()), this.delay);
+			}
 			NPCData data = CommandNPC.getCommandManager().getNPCData(npc.getId());
 			boolean isOp = player.isOp();
 			ArrayList<NPCCommand> commands = new ArrayList<>();
@@ -77,13 +83,24 @@ public class NPCListener implements Listener {
 			for(NPCCommand command : commands) {
 				if(command.getClickType() == clickType || command.getClickType() == ClickType.BOTH) {
 					if(player.hasPermission(command.getPermission()) || command.getPermission().equalsIgnoreCase("noPerm") || command.getPermission().isEmpty()) {
-						//------------ Economy ------------
+						//------------ Cooldown ------------
+						if(cooldown.hasCooldown(player.getUniqueId())) {
+							for(Cooldown cd : cooldown.getCooldowns(player.getUniqueId())) {
+								if (cd.getNpcID() == npc.getId() && cd.getCommandID() == command.getID()) {
+									if (command.getCooldownMessage() != null && !command.getCooldownMessage().isEmpty()) {
+										Messaging.sendError(player, command.getCooldownMessage());
+									}
+								}
+							}
+							continue;
+						}
+						//------------ Economy ------------w
 						if(command.getCost() > 0 && CommandNPC.isEconAvailable()) {
 							if(CommandNPC.getEcon().has(player, command.getCost())) {
 								CommandNPC.getEcon().withdrawPlayer(player, command.getCost());
 							}else{
 								Messaging.sendError(player, LanguageSettings.CmdNPC_NoMoney.getSetting());
-								return;
+								continue;
 							}
 						}
 						//------------ BungeeCord ------------
@@ -100,14 +117,15 @@ public class NPCListener implements Listener {
 										BungeeCordUtil.sendPlayerToServer(player, args[1]);
 										CommandNPC.getInstance().log("Sent '"+player.getName()+"' to server '"+args[1]+"'!", true);
 									}
-									return;
+									executeCooldown(player.getUniqueId(), npc.getId(), command.getID(), command.getCooldown());
+									continue;
 								}else{
 									Messaging.sendError(player, "Command can only have 1 argument. /server <server>");
-									return;
+									continue;
 								}
 							}else{
 								Messaging.sendError(player, "Command is a /server command, but BungeeCord is disabled in config.yml!");
-								return;
+								continue;
 							}
 						}
 						//------------ Execute Command ------------
@@ -147,11 +165,20 @@ public class NPCListener implements Listener {
 								}
 							}
 						}
+						//------------ Cooldown ------------
+						executeCooldown(player.getUniqueId(), npc.getId(), command.getID(), command.getCooldown());
 					}else{
 						Messaging.sendError(player, LanguageSettings.Commands_NoPermission.getSetting());
 					}
 				}//Wrong clickType (Do nothing)
 			}
+		}
+	}
+
+	private void executeCooldown(UUID uuid, int npcID, int commandID, int cd) {
+		if(cd > 0) {
+			cooldown.addCooldown(new Cooldown(uuid, npcID, commandID));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(CommandNPC.getInstance(), () -> cooldown.removeCooldown(uuid), cd);
 		}
 	}
 }

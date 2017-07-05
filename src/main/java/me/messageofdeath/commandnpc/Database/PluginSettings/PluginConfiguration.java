@@ -13,22 +13,20 @@ public class PluginConfiguration {
 	}
 
 	public void initConfiguration() {
-		CommandNPC.getQueueSystem().execute(() -> {
-			this.config = new YamlDatabase(this.instance, "config", false);
-			this.config.onStartUp();
-			this.config.saveOnSet = false;
-			boolean changes = false;
-			for (PluginSettings setting : PluginSettings.values()) {
-				if (!this.config.contains(setting.getName().replace("_", "."))) {
-					changes = true;
-					this.config.set(setting.getName().replace("_", "."), setting.getDefaultSetting());
-				}
+		this.config = new YamlDatabase(this.instance, "config", false);
+		this.config.onStartUp();
+		this.config.saveOnSet = false;
+		boolean changes = false;
+		for (PluginSettings setting : PluginSettings.values()) {
+			if (!this.config.contains(setting.getName().replace("_", "."))) {
+				changes = true;
+				this.config.set(setting.getName().replace("_", "."), setting.getDefaultSetting());
 			}
-			if (changes) {
-				this.config.save();
-			}
-			this.config.saveOnSet = true;
-		});
+		}
+		if (changes) {
+			this.config.save();
+		}
+		this.config.saveOnSet = true;
 	}
 
 	public YamlDatabase getConfig() {
@@ -36,10 +34,8 @@ public class PluginConfiguration {
 	}
 
 	public void loadConfiguration() {
-		CommandNPC.getQueueSystem().execute(() -> {
-			for (PluginSettings setting : PluginSettings.values()) {
-				setting.setSetting(this.config.getString(setting.getName().replace("_", "."), setting.getDefaultSetting()));
-			}
-		});
+		for (PluginSettings setting : PluginSettings.values()) {
+			setting.setSetting(this.config.getString(setting.getName().replace("_", "."), setting.getDefaultSetting()));
+		}
 	}
 }

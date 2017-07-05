@@ -20,7 +20,7 @@ import net.citizensnpcs.api.util.Messaging;
 @Requirements(selected = true, ownership = true)
 public class CitizenCommands {
 
-	@Command(aliases = { "npc" }, usage = "cmdadd [-c console] [-o Op] [-r random] [--v price] [--t clickType] [--d delay] [--p custom.permission.node] <command...>", 
+	@Command(aliases = { "npc" }, usage = "cmdadd [-c console] [-o Op] [-r random] [--v price] [--t clickType] [--d delay] [--cd cooldown] [--p custom.permission.node] <command...>",
 			desc = "Add a command to a NPC", modifiers = { "cmdadd" }, min = 2, flags = "cor", permission = "commandnpc.admin")
 	public void addCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int id = npc.getId();
@@ -39,6 +39,7 @@ public class CitizenCommands {
 		String cmd;
 		double cost = 0;
 		int delay = 0;
+		int cooldown = 0;
 		
 		if (args.hasFlag('c')) {
 			inConsole = true;
@@ -74,9 +75,16 @@ public class CitizenCommands {
 				Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "delay"));
 			}
 		}
+		if(args.hasValueFlag("cd")) {
+			if(Utilities.isInteger(args.getFlag("cd"))) {
+				cooldown = args.getFlagInteger("cd");
+			}else{
+				Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "cooldown"));
+			}
+		}
 		cmd = args.getJoinedStrings(1);
 		if (cmd != null) {
-			NPCCommand npcCommand = new NPCCommand(cmd, permission, clickType, inConsole, asOp, isRandom, cost, delay);
+			NPCCommand npcCommand = new NPCCommand(cmd, permission, "", clickType, inConsole, asOp, isRandom, cost, delay, cooldown);
 			if (CommandNPC.getCommandManager().hasNPCData(id)) {
 				CommandNPC.getCommandManager().getNPCData(id).addCommand(npcCommand);
 			} else {
@@ -109,8 +117,8 @@ public class CitizenCommands {
 		}
 	}
 	
-	@Command(aliases = { "npc" }, usage = "cmdset <id> [-c console] [-o Op] [-r random] [--v price] [--t clickType] [--d delay] [--p custom.permission.node] [command...]",
-			desc = "Set various variables for the command.", modifiers = { "cmdset" }, min = 2, flags = "co", permission = "commandnpc.admin")
+	@Command(aliases = { "npc" }, usage = "cmdset <id> [-c console] [-o Op] [-r random] [-m cdMsg] [--v price] [--t clickType] [--d delay] [--cd cooldown] [--p custom.permission.node] [command | cdMsg...]",
+			desc = "Set various variables for the command.", modifiers = { "cmdset" }, min = 2, flags = "com", permission = "commandnpc.admin")
 	public void setCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int npcID = npc.getId();
 		if(Utilities.isInteger(args.getString(1))) {
@@ -158,6 +166,15 @@ public class CitizenCommands {
 							Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "delay"));
 						}
 					}
+					if(args.hasValueFlag("cd")) {
+						if(Utilities.isInteger(args.getFlag("cd"))) {
+							command.setCooldown(args.getFlagInteger("cd"));
+							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Cooldown")
+									.replace("%value", command.getCooldown() + ""));
+						}else{
+							Messaging.sendError(sender, LanguageSettings.Commands_MustBeNumeric.getSetting().replace("%arg", "cooldown"));
+						}
+					}
 					if(args.hasValueFlag("t")) {
 						String value = args.getFlag("t");
 						if(ClickType.hasClickType(value)) {
@@ -169,9 +186,15 @@ public class CitizenCommands {
 						}
 					}
 					if(args.argsLength() > 2) {
-						command.setCommand(args.getJoinedStrings(2));
-						Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Command")
-								.replace("%value", command.getCommand() + ""));
+						if(args.hasFlag('m')) {
+							command.setCooldownMessage(args.getJoinedStrings(2));
+							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Cooldown Message")
+									.replace("%value", command.getCooldownMessage()));
+						}else {
+							command.setCommand(args.getJoinedStrings(2));
+							Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Command")
+									.replace("%value", command.getCommand()));
+						}
 					}
 					CommandNPC.getCommandDatabase().saveDatabase();
 				}else{
@@ -220,8 +243,10 @@ public class CitizenCommands {
 						.replace("%value", "" + command.getID()));
 				Messaging.send(sender, prefix + infoLine.replace("%name", "Command").replace("%value", command.getCommand()));
 				Messaging.send(sender, prefix + infoLine.replace("%name", "Permission").replace("%value", command.getPermission()));
+				Messaging.send(sender, prefix + infoLine.replace("%name", "Cooldown Message").replace("%value", command.getCooldownMessage()));
 				Messaging.send(sender, prefix + infoLine.replace("%name", "ClickType").replace("%value", command.getClickType().name().toLowerCase())
-						+ spacer + infoLine.replace("%name", "Cost").replace("%value", command.getCost() + ""));
+						+ spacer + infoLine.replace("%name", "Cost").replace("%value", command.getCost() + "")
+						+ spacer + infoLine.replace("%name", "Cooldown").replace("%value", command.getCooldown() + ""));
 				Messaging.send(sender, prefix + infoLine.replace("%name", "In Console").replace("%value", command.inConsole() + "")
 						+ spacer + infoLine.replace("%name", "As Op").replace("%value", command.asOp() + ""));
 			}

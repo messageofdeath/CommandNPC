@@ -6,28 +6,32 @@ public class NPCCommand {
 
 	private int id;
 	private int delay;
+	private int cooldown;
 	private String command;
 	private String permission;
+	private String cooldownMessage;
 	private ClickType clickType;
 	private boolean inConsole;
 	private boolean asOp;
 	private boolean isRandom;
 	private double cost;
 	
-	public NPCCommand(String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, double cost, int delay) {
-		this(1000, command, permission, clickType, inConsole, asOp, isRandom, cost, delay);
+	public NPCCommand(String command, String permission, String cooldownMessage, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, double cost, int delay, int cooldown) {
+		this(1000, command, permission, cooldownMessage, clickType, inConsole, asOp, isRandom, cost, delay, cooldown);
 	}
 	
-	public NPCCommand(int id, String command, String permission, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, double cost, int delay) {
+	public NPCCommand(int id, String command, String permission, String cooldownMessage, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, double cost, int delay, int cooldown) {
 		this.id = id;
 		this.command = command;
 		this.permission = permission;
+		this.cooldownMessage = cooldownMessage;
 		this.clickType = clickType;
 		this.inConsole = inConsole;
 		this.asOp = asOp;
 		this.isRandom = isRandom;
 		this.cost = cost;
 		this.delay = delay;
+		this.cooldown = cooldown;
 	}
 	
 	public int getID() {
@@ -40,6 +44,10 @@ public class NPCCommand {
 	
 	public String getPermission() {
 		return this.permission;
+	}
+
+	public String getCooldownMessage() {
+		return this.cooldownMessage;
 	}
 	
 	public ClickType getClickType() {
@@ -65,6 +73,10 @@ public class NPCCommand {
 	public int getDelay() {
 		return this.delay;
 	}
+
+	public int getCooldown() {
+		return this.cooldown;
+	}
 	
 	public void setID(int id) {
 		this.id = id;
@@ -76,6 +88,10 @@ public class NPCCommand {
 	
 	public void setPermission(String permission) {
 		this.permission = permission;
+	}
+
+	public void setCooldownMessage(String cooldownMessage) {
+		this.cooldownMessage = cooldownMessage;
 	}
 	
 	public void setClickType(ClickType clickType) {
@@ -100,5 +116,9 @@ public class NPCCommand {
 	
 	public void setDelay(int delay) {
 		this.delay = delay;
+	}
+
+	public void setCooldown(int cooldown) {
+		this.cooldown = cooldown;
 	}
 }

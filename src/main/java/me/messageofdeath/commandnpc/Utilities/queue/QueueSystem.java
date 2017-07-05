@@ -46,10 +46,7 @@ public class QueueSystem {
 
         public void run() {
             synchronized (queue) {
-                //!stop && queue.isEmpty() - Keep running while stop = false and queue is empty
-                //stop && !queue.isEmpty() - Keep running even if stop = false, because theres more tasks to complete before termination
-                //!stop && !queue.isEmpty() - Keep running if stop = false, and if queue is NOT empty
-                while(!stop && queue.isEmpty() || stop && !queue.isEmpty() || !stop && !queue.isEmpty()) {
+                while(!stop || stop && !queue.isEmpty()) {
                     if(queue.isEmpty()) {
                         try {
                             queue.wait();

@@ -32,28 +32,33 @@ public class CommandDatabase {
 						if (console.toLowerCase().contains("-c")) {
 							console = console.replace("-c", "");
 						}
-						data.addCommand(new NPCCommand(args[0], args[1], ClickType.valueOf(PluginSettings.ClickType.getSetting()), Boolean.parseBoolean(console),
-								Boolean.parseBoolean(args[3]), false, Double.parseDouble(args[4]), 0));
+						data.addCommand(new NPCCommand(args[0], args[1], "", ClickType.valueOf(PluginSettings.ClickType.getSetting()), Boolean.parseBoolean(console),
+								Boolean.parseBoolean(args[3]), false, Double.parseDouble(args[4]), 0, 0));
 						continue;
 					}
 					ClickType clickType;
 					if (args.length == 7) {// Version 1.8.6
 						clickType = this.getClickType(args);
-						data.addCommand(new NPCCommand(Integer.parseInt(args[0]), args[1], args[2], clickType, Boolean.parseBoolean(args[4]),
-								Boolean.parseBoolean(args[5]), false, Double.parseDouble(args[6]), 0));
+						data.addCommand(new NPCCommand(Integer.parseInt(args[0]), args[1], args[2], "", clickType, Boolean.parseBoolean(args[4]),
+								Boolean.parseBoolean(args[5]), false, Double.parseDouble(args[6]), 0, 0));
 						continue;
 					}
 					args = commands.split("~~~");
 					if (args.length == 8) {//Version 1.8.7
 						clickType = this.getClickType(args);
-						data.addCommand(new NPCCommand(Integer.parseInt(args[0]), args[1], args[2], clickType, Boolean.parseBoolean(args[4]),
-								Boolean.parseBoolean(args[5]), false, Double.parseDouble(args[6]), Integer.parseInt(args[7])));
+						data.addCommand(new NPCCommand(Integer.parseInt(args[0]), args[1], args[2], "", clickType, Boolean.parseBoolean(args[4]),
+								Boolean.parseBoolean(args[5]), false, Double.parseDouble(args[6]), Integer.parseInt(args[7]), 0));
 						continue;
 					}
-					if (args.length == 9) {//Version 1.8.8
+					if (args.length == 9) {//Version 1.8.8-1.8.9
 						clickType = this.getClickType(args);
-						data.addCommand(new NPCCommand(Integer.parseInt(args[0]), args[1], args[2], clickType, Boolean.parseBoolean(args[4]),
-								Boolean.parseBoolean(args[5]), Boolean.parseBoolean(args[6]), Double.parseDouble(args[7]), Integer.parseInt(args[8])));
+						data.addCommand(new NPCCommand(Integer.parseInt(args[0]), args[1], args[2], "", clickType, Boolean.parseBoolean(args[4]),
+								Boolean.parseBoolean(args[5]), Boolean.parseBoolean(args[6]), Double.parseDouble(args[7]), Integer.parseInt(args[8]), 0));
+					}
+					if (args.length == 11) {//Version 1.9.0
+						clickType = this.getClickType(args);
+						data.addCommand(new NPCCommand(Integer.parseInt(args[0]), args[1], args[2], args[4], clickType, Boolean.parseBoolean(args[5]),
+								Boolean.parseBoolean(args[6]), Boolean.parseBoolean(args[7]), Double.parseDouble(args[8]), Integer.parseInt(args[9]), Integer.parseInt(args[10])));
 					}
 				}
 				CommandNPC.getCommandManager().addNPCData(data);
@@ -71,7 +76,8 @@ public class CommandDatabase {
 				ArrayList<String> commands = new ArrayList<>();
 				for (NPCCommand command : data.getCommands()) {
 					commands.add(command.getID() + "~~~" + command.getCommand() + "~~~" + command.getPermission() + "~~~" + command.getClickType().name() + "~~~" +
-							command.inConsole() + "~~~" + command.asOp() + "~~~" + command.isRandom() + "~~~" + command.getCost() + "~~~" + command.getDelay());
+							command.getCooldownMessage() + "~~~" + command.inConsole() + "~~~" + command.asOp() + "~~~" + command.isRandom() + "~~~" +
+							command.getCost() + "~~~" + command.getDelay() + "~~~" + command.getCooldown());
 				}
 				database.set("NPCS." + data.getId() + ".Commands", commands);
 			}

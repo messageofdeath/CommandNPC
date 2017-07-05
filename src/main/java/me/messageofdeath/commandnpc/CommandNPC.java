@@ -38,13 +38,11 @@ public class CommandNPC extends JavaPlugin {
 	private static QueueSystem queueSystem;
 	
 	private static boolean econAvailable = false;
-	
-	@SuppressWarnings("unused")
-	private static Metrics metrics;
 
 	@Override
 	public void onEnable() {
 		CommandNPC.queueSystem = new QueueSystem(1);
+		new Metrics(this);
 		LanguageConfiguration langConfig = new LanguageConfiguration(this);
 		langConfig.initConfiguration();
 		langConfig.loadConfiguration();
