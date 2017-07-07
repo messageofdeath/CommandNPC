@@ -20,8 +20,9 @@ import net.citizensnpcs.api.util.Messaging;
 @Requirements(selected = true, ownership = true)
 public class CitizenCommands {
 
-	@Command(aliases = { "npc" }, usage = "cmdadd [-c console] [-o Op] [-r random] [--v price] [--t clickType] [--d delay] [--cd cooldown] [--p custom.permission.node] <command...>",
-			desc = "Add a command to a NPC", modifiers = { "cmdadd" }, min = 2, flags = "cor", permission = "commandnpc.admin")
+	@Command(aliases = { "npc" }, usage = "cmdadd [-c console] [-o Op] [-r random] [-i ignorePermMsg] [-l ignoreMoneyMsg] [--v price] [--t clickType] " +
+			"[--d delay] [--cd cooldown] [--p custom.permission.node] <command...>",
+			desc = "Add a command to a NPC", modifiers = { "cmdadd" }, min = 2, flags = "coril", permission = "commandnpc.admin")
 	public void addCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int id = npc.getId();
 		String permission = "noPerm";
@@ -36,6 +37,8 @@ public class CitizenCommands {
 		boolean inConsole = false;
 		boolean isRandom = false;
 		boolean asOp = false;
+		boolean ignorePerm = false;
+		boolean ignoreMoney = false;
 		String cmd;
 		double cost = 0;
 		int delay = 0;
@@ -49,6 +52,12 @@ public class CitizenCommands {
 		}
 		if (args.hasFlag('r')) {
 			isRandom = true;
+		}
+		if (args.hasFlag('i')) {
+			ignorePerm = true;
+		}
+		if (args.hasFlag('l')) {
+			ignoreMoney = true;
 		}
 		if(args.hasValueFlag("t")) {
 			String value = args.getFlag("t");
@@ -84,7 +93,7 @@ public class CitizenCommands {
 		}
 		cmd = args.getJoinedStrings(1);
 		if (cmd != null) {
-			NPCCommand npcCommand = new NPCCommand(cmd, permission, "", clickType, inConsole, asOp, isRandom, cost, delay, cooldown);
+			NPCCommand npcCommand = new NPCCommand(cmd, permission, "", clickType, inConsole, asOp, isRandom, ignorePerm, ignoreMoney, cost, delay, cooldown);
 			if (CommandNPC.getCommandManager().hasNPCData(id)) {
 				CommandNPC.getCommandManager().getNPCData(id).addCommand(npcCommand);
 			} else {
@@ -117,8 +126,9 @@ public class CitizenCommands {
 		}
 	}
 	
-	@Command(aliases = { "npc" }, usage = "cmdset <id> [-c console] [-o Op] [-r random] [-m cdMsg] [--v price] [--t clickType] [--d delay] [--cd cooldown] [--p custom.permission.node] " +
-			"[command | cdMsg...]", desc = "Set various variables for the command.", modifiers = { "cmdset" }, min = 2, flags = "com", permission = "commandnpc.admin")
+	@Command(aliases = { "npc" }, usage = "cmdset <id> [-c console] [-o Op] [-r random] [-m cdMsg] [-i ignorePermMsg] [-l ignoreMoneyMsg] [--v price] " +
+			"[--t clickType] [--d delay] [--cd cooldown] [--p custom.permission.node] [command | cdMsg...]",
+			desc = "Set various variables for the command.", modifiers = { "cmdset" }, min = 2, flags = "cormil", permission = "commandnpc.admin")
 	public void setCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int npcID = npc.getId();
 		if(Utilities.isInteger(args.getString(1))) {
@@ -142,6 +152,16 @@ public class CitizenCommands {
 						command.setIsRandom(!command.isRandom());
 						Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Random")
 								.replace("%value", command.isRandom() + ""));
+					}
+					if(args.hasFlag('i')) {
+						command.setIgnorePermMsg(!command.isIgnorePermMsg());
+						Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Ignore Perm Message")
+								.replace("%value", command.isIgnorePermMsg() + ""));
+					}
+					if(args.hasFlag('l')) {
+						command.setIgnoreMoneyMsg(!command.isIgnoreMoneyMsg());
+						Messaging.send(sender, LanguageSettings.Commands_SetTo_Line.getSetting().replace("%variable", "Ignore Money Message")
+								.replace("%value", command.isIgnoreMoneyMsg() + ""));
 					}
 					if(args.hasValueFlag("p")) {
 						command.setPermission(args.getFlag("p"));
@@ -234,6 +254,7 @@ public class CitizenCommands {
 			}else{
 				commands = data.getCommands();
 			}
+			//npc cmdset 2 -c -o -r -m -i -l --v 25 --t left --d 60 --cd 200 --p custom.permission This is a test cooldown message
 			Messaging.send(sender, CommandNPC.prefix + LanguageSettings.Commands_List_InfoHeader.getSetting().replace("%id", id + ""));
 			String prefix = LanguageSettings.Commands_List_InfoLinePrefix.getSetting();
 			String infoLine = LanguageSettings.Commands_List_InfoLine.getSetting();
@@ -244,6 +265,8 @@ public class CitizenCommands {
 				Messaging.send(sender, prefix + infoLine.replace("%name", "Command").replace("%value", command.getCommand()));
 				Messaging.send(sender, prefix + infoLine.replace("%name", "Permission").replace("%value", command.getPermission()));
 				Messaging.send(sender, prefix + infoLine.replace("%name", "Cooldown Message").replace("%value", command.getCooldownMessage()));
+				Messaging.send(sender, prefix + infoLine.replace("%name", "Ignore Perm Message").replace("%value", command.isIgnorePermMsg() + "")
+						+ spacer + infoLine.replace("%name", "Ignore Money Message").replace("%value", command.isIgnoreMoneyMsg() + ""));
 				Messaging.send(sender, prefix + infoLine.replace("%name", "ClickType").replace("%value", command.getClickType().name().toLowerCase())
 						+ spacer + infoLine.replace("%name", "Cost").replace("%value", command.getCost() + "")
 						+ spacer + infoLine.replace("%name", "Cooldown").replace("%value", command.getCooldown() + ""));

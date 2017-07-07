@@ -14,13 +14,17 @@ public class NPCCommand {
 	private boolean inConsole;
 	private boolean asOp;
 	private boolean isRandom;
+	private boolean ignorePermMsg;
+	private boolean ignoreMoneyMsg;
 	private double cost;
 	
-	public NPCCommand(String command, String permission, String cooldownMessage, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, double cost, int delay, int cooldown) {
-		this(1000, command, permission, cooldownMessage, clickType, inConsole, asOp, isRandom, cost, delay, cooldown);
+	public NPCCommand(String command, String permission, String cooldownMessage, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, boolean ignorePermMsg,
+					  boolean ignoreMoneyMsg, double cost, int delay, int cooldown) {
+		this(1000, command, permission, cooldownMessage, clickType, inConsole, asOp, isRandom, ignorePermMsg, ignoreMoneyMsg, cost, delay, cooldown);
 	}
 	
-	public NPCCommand(int id, String command, String permission, String cooldownMessage, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, double cost, int delay, int cooldown) {
+	public NPCCommand(int id, String command, String permission, String cooldownMessage, ClickType clickType, boolean inConsole, boolean asOp, boolean isRandom, boolean ignorePermMsg,
+					  boolean ignoreMoneyMsg, double cost, int delay, int cooldown) {
 		this.id = id;
 		this.command = command;
 		this.permission = permission;
@@ -29,6 +33,8 @@ public class NPCCommand {
 		this.inConsole = inConsole;
 		this.asOp = asOp;
 		this.isRandom = isRandom;
+		this.ignorePermMsg = ignorePermMsg;
+		this.ignoreMoneyMsg = ignoreMoneyMsg;
 		this.cost = cost;
 		this.delay = delay;
 		this.cooldown = cooldown;
@@ -64,6 +70,14 @@ public class NPCCommand {
 	
 	public boolean isRandom() {
 		return this.isRandom;
+	}
+
+	public boolean isIgnorePermMsg() {
+		return this.ignorePermMsg;
+	}
+
+	public boolean isIgnoreMoneyMsg() {
+		return this.ignoreMoneyMsg;
 	}
 	
 	public double getCost() {
@@ -108,6 +122,14 @@ public class NPCCommand {
 	
 	public void setIsRandom(boolean isRandom) {
 		this.isRandom = isRandom;
+	}
+
+	public void setIgnorePermMsg(boolean ignorePermMsg) {
+		this.ignorePermMsg = ignorePermMsg;
+	}
+
+	public void setIgnoreMoneyMsg(boolean ignoreMoneyMsg) {
+		this.ignoreMoneyMsg = ignoreMoneyMsg;
 	}
 	
 	public void setCost(double cost) {

@@ -99,7 +99,9 @@ public class NPCListener implements Listener {
 							if(CommandNPC.getEcon().has(player, command.getCost())) {
 								CommandNPC.getEcon().withdrawPlayer(player, command.getCost());
 							}else{
-								Messaging.sendError(player, LanguageSettings.CmdNPC_NoMoney.getSetting());
+								if(!command.isIgnoreMoneyMsg()) {
+									Messaging.sendError(player, LanguageSettings.CmdNPC_NoMoney.getSetting());
+								}
 								continue;
 							}
 						}
@@ -121,13 +123,13 @@ public class NPCListener implements Listener {
 									continue;
 								}else{
 									Messaging.sendError(player, "Inform the system administrator to look in console for error.");
-									CommandNPC.getInstance().logError("Server Command", "NPCListener", "onClick(Player, NPC, ClickType)", "/server command for NPC " +
+									CommandNPC.getInstance().logError("BungeeCord Command", "NPCListener", "onClick(Player, NPC, ClickType)", "/server command for NPC " +
 											"ID: " + npc.getId() + ", Command ID: " + command.getID() + ", does not follow the format of /server <serverName>");
 									continue;
 								}
 							}else{
 								Messaging.sendError(player, "Inform the system administrator to look in console for error.");
-								CommandNPC.getInstance().logError("Server Command", "NPCListener", "onClick(Player, NPC, ClickType)", "BungeeCord is " +
+								CommandNPC.getInstance().logError("BungeeCord Command", "NPCListener", "onClick(Player, NPC, ClickType)", "BungeeCord is " +
 										"disabled in config.yml, yet an NPC has the command /server registered to it.");
 								continue;
 							}
@@ -172,7 +174,9 @@ public class NPCListener implements Listener {
 						//------------ Cooldown ------------
 						executeCooldown(player.getUniqueId(), npc.getId(), command.getID(), command.getCooldown());
 					}else{
-						Messaging.sendError(player, LanguageSettings.Commands_NoPermission.getSetting());
+						if(!command.isIgnorePermMsg()) {
+							Messaging.sendError(player, LanguageSettings.Commands_NoPermission.getSetting());
+						}
 					}
 				}//Wrong clickType (Do nothing)
 			}
