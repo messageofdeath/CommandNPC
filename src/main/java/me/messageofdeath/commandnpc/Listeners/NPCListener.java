@@ -83,18 +83,18 @@ public class NPCListener implements Listener {
 			}
 			for(NPCCommand command : commands) {
 				if(command.getClickType() == clickType || command.getClickType() == ClickType.BOTH) {
-					if(player.hasPermission(command.getPermission()) || command.getPermission().equalsIgnoreCase("noPerm") || command.getPermission().isEmpty()) {
+					if(command.getPermission().isEmpty() || player.hasPermission(command.getPermission()) || command.getPermission().equalsIgnoreCase("noPerm")) {
 						//------------ Cooldown ------------
 						if(cooldown.hasCooldown(player.getUniqueId())) {
-							if(Arrays.stream(cooldown.getCooldowns(player.getUniqueId())).filter(search ->
-									search.getNpcID() == npc.getId() && search.getCommandID() == command.getID()).findFirst().orElse(null) != null) {
+							if(Arrays.stream(cooldown.getCooldowns(player.getUniqueId())).anyMatch(search ->
+									search.getNpcID() == npc.getId() && search.getCommandID() == command.getID())) {
 								if (command.getCooldownMessage() != null && !command.getCooldownMessage().isEmpty()) {
 									Messaging.sendError(player, command.getCooldownMessage());
 								}
 								continue;
 							}
 						}
-						//------------ Economy ------------w
+						//------------ Economy ------------
 						if(command.getCost() > 0 && CommandNPC.isEconAvailable()) {
 							if(CommandNPC.getEcon().has(player, command.getCost())) {
 								CommandNPC.getEcon().withdrawPlayer(player, command.getCost());
@@ -120,18 +120,22 @@ public class NPCListener implements Listener {
 									executeCooldown(player.getUniqueId(), npc.getId(), command.getID(), command.getCooldown());
 									continue;
 								}else{
-									Messaging.sendError(player, "Command can only have 1 argument. /server <server>");
+									Messaging.sendError(player, "Inform the system administrator to look in console for error.");
+									CommandNPC.getInstance().logError("Server Command", "NPCListener", "onClick(Player, NPC, ClickType)", "/server command for NPC " +
+											"ID: " + npc.getId() + ", Command ID: " + command.getID() + ", does not follow the format of /server <serverName>");
 									continue;
 								}
 							}else{
-								Messaging.sendError(player, "Command is a /server command, but BungeeCord is disabled in config.yml!");
+								Messaging.sendError(player, "Inform the system administrator to look in console for error.");
+								CommandNPC.getInstance().logError("Server Command", "NPCListener", "onClick(Player, NPC, ClickType)", "BungeeCord is " +
+										"disabled in config.yml, yet an NPC has the command /server registered to it.");
 								continue;
 							}
 						}
 						//------------ Execute Command ------------
 						if(!command.inConsole()) {
 							try{
-								if(!isOp && command.asOp()) {
+								if(command.asOp() && !isOp) {
 									player.setOp(true);
 								}
 								if(command.getDelay() > 0) {

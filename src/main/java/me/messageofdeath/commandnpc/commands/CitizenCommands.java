@@ -117,8 +117,8 @@ public class CitizenCommands {
 		}
 	}
 	
-	@Command(aliases = { "npc" }, usage = "cmdset <id> [-c console] [-o Op] [-r random] [-m cdMsg] [--v price] [--t clickType] [--d delay] [--cd cooldown] [--p custom.permission.node] [command | cdMsg...]",
-			desc = "Set various variables for the command.", modifiers = { "cmdset" }, min = 2, flags = "com", permission = "commandnpc.admin")
+	@Command(aliases = { "npc" }, usage = "cmdset <id> [-c console] [-o Op] [-r random] [-m cdMsg] [--v price] [--t clickType] [--d delay] [--cd cooldown] [--p custom.permission.node] " +
+			"[command | cdMsg...]", desc = "Set various variables for the command.", modifiers = { "cmdset" }, min = 2, flags = "com", permission = "commandnpc.admin")
 	public void setCmd(CommandContext args, CommandSender sender, NPC npc) {
 		int npcID = npc.getId();
 		if(Utilities.isInteger(args.getString(1))) {

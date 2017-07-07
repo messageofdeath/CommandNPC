@@ -11,12 +11,12 @@ import me.messageofdeath.commandnpc.Listeners.NPCListener;
 import me.messageofdeath.commandnpc.NPCDataManager.NPCDataManager;
 import me.messageofdeath.commandnpc.Utilities.BungeeCord.BungeeCordUtil;
 import me.messageofdeath.commandnpc.Utilities.CitizenBackend.CitizenCommandRegister;
+import me.messageofdeath.commandnpc.Utilities.Metrics.Metrics;
 import me.messageofdeath.commandnpc.Utilities.queue.QueueSystem;
 import me.messageofdeath.commandnpc.commands.CitizenCommands;
 import me.messageofdeath.commandnpc.commands.ReloadCommand;
 import net.milkbowl.vault.economy.Economy;
 
-import org.bstats.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;

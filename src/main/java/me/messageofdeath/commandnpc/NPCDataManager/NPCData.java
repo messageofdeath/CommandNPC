@@ -1,7 +1,6 @@
 package me.messageofdeath.commandnpc.NPCDataManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class NPCData {
@@ -31,12 +30,7 @@ public class NPCData {
 	}
 	
 	public boolean isRandom() {
-		for(NPCCommand cmd : this.commands) {
-			if(cmd.isRandom()) {
-				return true;
-			}
-		}
-		return false;
+		return commands.stream().anyMatch(NPCCommand::isRandom);
 	}
 	
 	public void addCommand(NPCCommand command) {
@@ -45,30 +39,23 @@ public class NPCData {
 	}
 	
 	public void removeCommand(int id) {
-		if(this.hasCommand(id)) {
-			this.commands.remove(this.getCommand(id));
-			checkPositions();
-		}
+		commands.stream().filter(cmd -> cmd.getID() == id).findFirst().ifPresent(commands::remove);
+		checkPositions();
 	}
 	
 	public boolean hasCommand(int id) {
-		return this.getCommand(id) != null;
+		return commands.stream().anyMatch(cmd -> cmd.getID() == id);
 	}
 	
 	public NPCCommand getCommand(int id) {
-		for(NPCCommand command : this.commands) {
-			if(command.getID() == id) {
-				return command;
-			}
-		}
-		return null;
+		return commands.stream().filter(cmd -> cmd.getID() == id).findFirst().orElse(null);
 	}
 	
 	public ArrayList<NPCCommand> getCommands() {
-		return this.commands;
+		return commands;
 	}
 	
-	public void checkPositions() {
+	private void checkPositions() {
 		ArrayList<NPCCommand> commands = this.commands;
 		commands.sort(comparePosition());
 		if (!commands.isEmpty()) {
