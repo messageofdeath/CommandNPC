@@ -7,7 +7,7 @@
     <groupId>me.messageofdeath</groupId>
     <artifactId>commandnpc</artifactId>
     <name>CommandNPC</name>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.9.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -61,6 +61,21 @@
     </dependencies>
     
     <build>
+        <defaultGoal>clean install</defaultGoal>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <finalName>${project.name}-${project.version}</finalName>
+
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <directory>${basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -70,6 +85,21 @@
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
                     <optimize>true</optimize>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifestEntries>
+                            <Name>${project.name}</Name>
+                            <Version>${project.version}</Version>
+                        </manifestEntries>
+                    </archive>
+                    <!-- <outputDirectory>F:\My Folder\Development\Development Server\plugins\CommandNPC.jar</outputDirectory> -->
                 </configuration>
             </plugin>
             <plugin>
