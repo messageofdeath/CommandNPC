@@ -36,6 +36,8 @@ public class CommandNPC extends JavaPlugin {
 	private static Economy econ = null;
 
 	private static QueueSystem queueSystem;
+
+	private static boolean placeHolderAPI = false;
 	
 	private static boolean econAvailable = false;
 
@@ -53,6 +55,9 @@ public class CommandNPC extends JavaPlugin {
 			this.logError("Required Dependencies", "commandnpc", "onEnable()", "Citizens 2 not found! commandnpc will now shut down.");
 			super.getServer().getPluginManager().disablePlugin(this);
 			return;
+		}
+		if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+			placeHolderAPI = true;
 		}
 		this.setupEconomy();
 		
@@ -94,7 +99,7 @@ public class CommandNPC extends JavaPlugin {
 		return econ;
 	}
 
-	public static String getColorized(String input) {
+	private static String getColorized(String input) {
 		return ChatColor.translateAlternateColorCodes('&', input);
 	}
 
@@ -116,6 +121,10 @@ public class CommandNPC extends JavaPlugin {
 	
 	public static PluginConfiguration getConfigX() {
 		return config;
+	}
+
+	public static boolean hasPlaceHolderAPI() {
+		return placeHolderAPI;
 	}
 	
 	public void reloadConfigX() {

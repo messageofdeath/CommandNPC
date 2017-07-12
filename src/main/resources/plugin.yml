@@ -3,7 +3,7 @@ author: messageofdeath
 version: 1.9.1
 main: me.messageofdeath.commandnpc.CommandNPC
 depend: [Citizens]
-softdepend: [Vault]
+softdepend: [Vault, PlaceholderAPI]
 commands:
   commandnpc:
     description: Reload this plugin.

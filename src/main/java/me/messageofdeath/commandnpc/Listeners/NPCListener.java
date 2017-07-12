@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.messageofdeath.commandnpc.CommandNPC;
 import me.messageofdeath.commandnpc.Database.ClickType;
 import me.messageofdeath.commandnpc.Database.LanguageSettings.LanguageSettings;
@@ -142,13 +143,13 @@ public class NPCListener implements Listener {
 								}
 								if(command.getDelay() > 0) {
 									scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), () -> {
-                                        player.chat("/" + command.getCommand().replace("%name", player.getName()));
+                                        player.chat("/" + process(player, command.getCommand()));
                                         if(PluginSettings.ExecuteCommandMessage.getBoolean()) {
                                             Messaging.send(player, LanguageSettings.CmdNPC_Executed.getSetting());
                                         }
                                     }, command.getDelay());
 								}else{
-									player.chat("/" + command.getCommand().replace("%name", player.getName()));
+									player.chat("/" + process(player, command.getCommand()));
 									if(PluginSettings.ExecuteCommandMessage.getBoolean()) {
 										Messaging.send(player, LanguageSettings.CmdNPC_Executed.getSetting());
 									}
@@ -159,13 +160,13 @@ public class NPCListener implements Listener {
 						}else{
 							if(command.getDelay() > 0) {
 								scheduler.scheduleSyncDelayedTask(CommandNPC.getInstance(), () -> {
-                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
+                                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), process(player, command.getCommand()));
                                     if(PluginSettings.ExecuteCommandMessage.getBoolean()) {
                                         Messaging.send(player, LanguageSettings.CmdNPC_Executed.getSetting());
                                     }
                                 }, command.getDelay());
 							}else{
-								Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.getCommand().replace("%name", player.getName()));
+								Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), process(player, command.getCommand()));
 								if(PluginSettings.ExecuteCommandMessage.getBoolean()) {
 									Messaging.send(player, LanguageSettings.CmdNPC_Executed.getSetting());
 								}
@@ -181,6 +182,11 @@ public class NPCListener implements Listener {
 				}//Wrong clickType (Do nothing)
 			}
 		}
+	}
+
+	private String process(Player player, String cmd) {
+		return CommandNPC.hasPlaceHolderAPI() ? PlaceholderAPI.setPlaceholders(player, cmd.replace("%name", player.getName()))
+				: cmd.replace("%name", player.getName());
 	}
 
 	private void executeCooldown(UUID uuid, int npcID, int commandID, int cd) {
