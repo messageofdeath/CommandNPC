@@ -1,7 +1,9 @@
-name: CommandNPC
-author: messageofdeath
-version: 1.9.1
+name: ${project.name}
+version: ${project.version}
 main: me.messageofdeath.commandnpc.CommandNPC
+
+author: messageofdeath
+
 depend: [Citizens]
 softdepend: [Vault, PlaceholderAPI]
 commands:
