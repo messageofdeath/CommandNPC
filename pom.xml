@@ -110,7 +110,7 @@
                             <Version>${project.version}</Version>
                         </manifestEntries>
                     </archive>
-                    <!-- <outputDirectory>F:\My Folder\Development\Development Server\plugins\CommandNPC.jar</outputDirectory> -->
+                    <!--<outputDirectory>F:\My Folder\Development\Development Server\plugins</outputDirectory>-->
                 </configuration>
             </plugin>
             <plugin>
