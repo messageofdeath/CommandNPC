@@ -107,7 +107,7 @@ public class NPCListener implements Listener {
 							}
 						}
 						//------------ BungeeCord ------------
-						if(command.getCommand().toLowerCase().startsWith("server")) {
+						if(command.getCommand().toLowerCase().startsWith("server ")) {
 							if(PluginSettings.BungeeCord.getBoolean()) {
 								String[] args = command.getCommand().split(" ");
 								if(args.length == 2) {
