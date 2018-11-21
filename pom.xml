@@ -7,22 +7,22 @@
     <groupId>me.messageofdeath</groupId>
     <artifactId>commandnpc</artifactId>
     <name>CommandNPC</name>
-    <version>1.9.1</version>
+    <version>1.9.2</version>
     <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
-        <bukkit.version>1.12-R0.1-SNAPSHOT</bukkit.version>
-        <citizensapi.version>2.0.22-SNAPSHOT</citizensapi.version>
-        <vault.version>1.6</vault.version>
-        <placeholderapi.version>2.0.8</placeholderapi.version>
+        <version>1.13.2-R0.1-SNAPSHOT</version>
+        <citizensapi.version>2.0.24-SNAPSHOT</citizensapi.version>
+        <vault.version>1.7</vault.version>
+        <placeholderapi.version>2.9.2</placeholderapi.version>
     </properties>
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
             <id>vault-repo</id>
@@ -40,15 +40,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>${bukkit.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>${bukkit.version}</version>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
