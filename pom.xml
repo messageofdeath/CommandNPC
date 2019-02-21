@@ -15,7 +15,7 @@
         <jdk.version>1.8</jdk.version>
         <version>1.13.2-R0.1-SNAPSHOT</version>
         <citizensapi.version>2.0.24-SNAPSHOT</citizensapi.version>
-        <vault.version>1.7</vault.version>
+        <vault.version>1.7-SNAPSHOT</vault.version>
         <placeholderapi.version>2.9.2</placeholderapi.version>
     </properties>
 
@@ -25,8 +25,8 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+            <id>jitpack.io</id>
+            <url>http://jitpack.io</url>
         </repository>
         <repository>
             <id>citizens-repo</id>
@@ -46,9 +46,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.milkbowl.vault</groupId>
+            <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
-            <version>${vault.version}</version>
+            <version>da407c0059</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.github.MilkBowl:VaultAPI:da407c0059">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/MilkBowl/VaultAPI/da407c0059/VaultAPI-da407c0059.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/MilkBowl/VaultAPI/da407c0059/VaultAPI-da407c0059-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/MilkBowl/VaultAPI/da407c0059/VaultAPI-da407c0059-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
